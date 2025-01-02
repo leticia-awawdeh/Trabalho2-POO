@@ -44,6 +44,10 @@ public class Equipamento {
         return nome;
     }
 
+    public void setNome(String nome){
+        this.nome = nome;
+    }
+
     public String getDescricao() {
         return descricao;
     }
@@ -62,13 +66,7 @@ public class Equipamento {
 
     @Override
     public String toString() {
-        return "com.Backend.Equipamento{" +
-                "codigo:" + codigo +
-                ", nome:'" + nome + '\'' +
-                ", descricao:'" + descricao + '\'' +
-                ", valorDiario:" + valorDiario +
-                ", status:'" + status +
-                '}';
+        return nome;
     }
 }
 

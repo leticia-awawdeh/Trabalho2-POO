@@ -1,7 +1,8 @@
 package com.GUI;
 
+import com.Backend.CadastroCli;
 import com.Backend.Equipamento;
-
+import com.Backend.GerenciadorDados;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -20,7 +21,10 @@ public class CadastroEquipamento {
     private JButton btnCancelarCadEquip;
     private JPanel panelCadEquip;
 
-    public CadastroEquipamento(List<Equipamento> equipamentos) {
+
+    public CadastroEquipamento() {
+
+
         btnCadEquip.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -34,7 +38,9 @@ public class CadastroEquipamento {
 
                     // Lógica de cadastro e exibição
                     Equipamento equipamento = new Equipamento(nomeEquip, descricaoEquip, valorLocacao);
-                    equipamentos.add(equipamento);
+                    GerenciadorDados.adicionarEquipamento(equipamento);
+
+
 
                     NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
                     String valorFormatado = formatter.format(valorLocacao);
@@ -43,6 +49,7 @@ public class CadastroEquipamento {
                             "Nome: " + nomeEquip + "\n" +
                             "Descrição: " + descricaoEquip + "\n" +
                             "Valor de Locação Diária: " + valorFormatado);
+
 
                     // Limpa os campos
                     txtNomeEquip.setText("");
@@ -66,6 +73,7 @@ public class CadastroEquipamento {
                 txtLocDiaria.setText("");
             }
         });
+
         txtLocDiaria.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -109,6 +117,8 @@ public class CadastroEquipamento {
             }
         });
     }
+
+
     public JPanel getPanel() {
         return panelCadEquip;
     }
