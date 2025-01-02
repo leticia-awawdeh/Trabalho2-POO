@@ -1,6 +1,8 @@
 package com.GUI;
 
 import com.Backend.CadastroCli;
+import com.Backend.GerenciadorDados;
+
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
@@ -93,7 +95,7 @@ public class CadastroCliente {
                 String cpfCli = txtCpf.getText(); // CPF formatado
                 String telefoneCli = txtTelefone.getText(); // Telefone formatado
 
-                // Verificação de campos vazios
+                // Verifica campos obrigatórios
                 if (nomeCli == null || nomeCli.trim().isEmpty() ||
                         cpfCli == null || cpfCli.trim().isEmpty() ||
                         telefoneCli == null || telefoneCli.trim().isEmpty()) {
@@ -104,8 +106,11 @@ public class CadastroCliente {
                     return;
                 }
 
+                // Cria o objeto cliente
                 CadastroCli cliente = new CadastroCli(nomeCli, cpfCli, telefoneCli);
-                clientes.add(cliente);
+
+                // Adiciona o cliente no GerenciadorDados
+                GerenciadorDados.adicionarCliente(cliente);
 
                 JOptionPane.showMessageDialog(panelCadastroCliente,
                         "Cliente cadastrado com sucesso:\n"
@@ -114,7 +119,7 @@ public class CadastroCliente {
                                 + "Telefone: " + telefoneCli,
                         "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
-                // Reiniciar campos
+                // Reinicia os campos
                 txtNomeCli.setText("");
                 txtCpf.setValue(null);
                 txtTelefone.setValue(null);
