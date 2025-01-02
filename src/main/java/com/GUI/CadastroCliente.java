@@ -10,16 +10,12 @@ import java.util.List;
 
 public class CadastroCliente {
 
-
-
-    private JPanel panelCadastroCliente;
-    private JFormattedTextField txtNomeCli;
+    private JTextField txtNomeCli;
     private JFormattedTextField txtTelefone;
     private JFormattedTextField txtCpf;
     private JButton btnSalvarCadCli;
     private JButton btnCancelarCadastro;
-    private JLabel txtCpfCli;
-    private JLabel txtTelefoneCli;
+    private JPanel panelCadastroCliente;
 
     private List<CadastroCli> clientes;
 
@@ -31,11 +27,11 @@ public class CadastroCliente {
         JLabel lblNome = new JLabel("Nome:");
         JLabel lblCpf = new JLabel("CPF:");
         JLabel lblTelefone = new JLabel("Telefone:");
-        txtNomeCli = new JFormattedTextField();
-        txtCpf = new JFormattedTextField();
-        txtTelefone = new JFormattedTextField();
-        btnSalvarCadCli = new JButton("Salvar");
-        btnCancelarCadastro = new JButton("Cancelar");
+//        txtNomeCli = new JFormattedTextField();
+//        txtCpf = new JFormattedTextField();
+//        txtTelefone = new JFormattedTextField();
+//        btnSalvarCadCli = new JButton("Salvar");
+//        btnCancelarCadastro = new JButton("Cancelar");
 
         try {
             // Aplicando máscara para CPF
