@@ -102,7 +102,7 @@
                   <grid row="4" column="2" row-span="1" col-span="3" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
-              <component id="e7b9" class="javax.swing.JButton" binding="cadastrarEquipamentoButton" default-binding="true">
+              <component id="e7b9" class="javax.swing.JButton" binding="btnCadEquip">
                 <constraints>
                   <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -110,7 +110,7 @@
                   <text value="Cadastrar Equipamento"/>
                 </properties>
               </component>
-              <component id="12e3e" class="javax.swing.JButton" binding="cancelarCadastroDoEquipamentoButton" default-binding="true">
+              <component id="12e3e" class="javax.swing.JButton" binding="btnCancelarCadEquip">
                 <constraints>
                   <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>

@@ -7,7 +7,8 @@ import java.util.Set;
 public class Equipamento {
     private static final Set<Integer> codigosUsados = new HashSet<>();
 
-    private int codigo; // Código único gerado automaticamente
+    private int codigo;
+     // Código único gerado automaticamente
     private String nome; // Nome do equipamento
     private String descricao; // Descrição do equipamento
     private double valorDiario; // Valor diário do aluguel

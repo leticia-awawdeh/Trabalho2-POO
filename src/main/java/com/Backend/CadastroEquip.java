@@ -1,5 +1,6 @@
 package com.Backend;
 
+import java.util.Random;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -15,7 +16,7 @@ public class CadastroEquip {
     public void cadastrarEquipamento(String nome, String descricao, double valorDiario) {
         Equipamento equipamento = new Equipamento(nome, descricao, valorDiario);
         equipamentos.add(equipamento);
-        System.out.println("com.Backend.Equipamento cadastrado com sucesso: " + equipamento);
+        System.out.println("Equipamento cadastrado com sucesso: " + equipamento);
     }
 
     public void listarEquipamentos() {
@@ -37,7 +38,7 @@ public class CadastroEquip {
             locacoes.add(locacao);
             System.out.println("Locação registrada com sucesso: " + locacao);
         } else {
-            System.out.println("com.Backend.Equipamento não disponível para locação.");
+            System.out.println("Equipamento não disponível para locação.");
         }
     }
 
