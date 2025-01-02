@@ -8,8 +8,8 @@ import java.util.List;
 public class CadastroCli {
 
     private String nomeCli;
-    private String cpf; //verificar qual formato de cpf é melhor
-    private String telefone; //verificar qual formato de telefone é melhor (se necessita de DDD)
+    private String cpfCli; //verificar qual formato de cpf é melhor
+    private String telefoneCli; //verificar qual formato de telefone é melhor (se necessita de DDD)
     private List<Equipamento> equipAlug;
     private LocalDate dataIni;
     private LocalDate dataDevol;
@@ -18,10 +18,10 @@ public class CadastroCli {
 
     // Construtores
 
-    public CadastroCli(String nomeCli, String cpf, String telefone) {
+    public CadastroCli(String nomeCli, String cpfCli, String telefoneCli) {
         this.nomeCli = nomeCli;
-        this.cpf = cpf;
-        this.telefone = telefone;
+        this.cpfCli = cpfCli;
+        this.telefoneCli = telefoneCli;
     }
 
     // Métodos
@@ -51,26 +51,25 @@ public class CadastroCli {
     }
 
     public String getCpf() {
-        return cpf;
+        return cpfCli;
     }
 
     public void setCpf(String cpf) {
-        this.cpf = cpf;
+        this.cpfCli = cpfCli;
     }
 
     public String getTelefone() {
-        return telefone;
+        return telefoneCli;
     }
 
     public void setTelefone(String telefone) {
-        this.telefone = telefone;
+        this.telefoneCli = telefoneCli;
     }
-
 
     @Override
     public String toString() {
-        return "Cadastro do Cliente: " + nomeCli +
-                ", CPF: " + cpf +
-                ", Telefone: " + telefone;
+        return "Nome: " + nomeCli + "\n" +
+                "CPF: " + cpfCli + "\n" +
+                "Telefone Celular: " + telefoneCli;
     }
 }

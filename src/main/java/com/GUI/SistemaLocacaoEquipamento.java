@@ -1,5 +1,7 @@
 package com.GUI;
 
+import javax.swing.text.MaskFormatter;
+import javax.swing.text.DefaultFormatterFactory;
 import com.Backend.*;
 import javax.swing.*;
 import java.awt.*;
@@ -13,8 +15,8 @@ public class SistemaLocacaoEquipamento extends JFrame {
     private JPanel panel1;
     private JTabbedPane PainelSis;
     private JTextField txtNomeCli;
-    private JTextField txtCpf;
-    private JTextField txtTelefone;
+    private JFormattedTextField txtCpf;
+    private JFormattedTextField txtTelefone;
     private JButton btnSalvarCadCliente;
     private JButton cancelarCadastroButton;
     private JTextField txtNomeEquip;
@@ -37,33 +39,65 @@ public class SistemaLocacaoEquipamento extends JFrame {
     private JButton confirmarDevoluçãoButton;
     private JComboBox comboBox2;
 
-    private List<CadastroCli> clientes = new ArrayList<>();
+    private List<CadastroCli> clientes;
 
     public SistemaLocacaoEquipamento() {
+
+        clientes = new ArrayList<>();
+
+        try {
+            // Máscara para CPF
+            MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
+            cpfMask.setPlaceholderCharacter('_'); // Caracter mostrado nas posições vazias
+            txtCpf.setFormatterFactory(new DefaultFormatterFactory(cpfMask)); // Aplica a máscara no campo existente
+
+            // Máscara para Telefone
+            MaskFormatter telefoneMask = new MaskFormatter("(##) #####-####");
+            telefoneMask.setPlaceholderCharacter('_'); // Caracter mostrado nas posições vazias
+            txtTelefone.setFormatterFactory(new DefaultFormatterFactory(telefoneMask));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         btnSalvarCadCliente.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String nome = txtNomeCli.getText();
-                String cpf = txtCpf.getText();
-                String telefone = txtTelefone.getText();
-                if (nome == null || nome.trim().isEmpty() ||
-                        cpf == null || cpf.trim().isEmpty() ||
-                        telefone == null || telefone.trim().isEmpty()) {
+                String nomeCli = txtNomeCli.getText();
+                String cpfCli = txtCpf.getText(); // CPF formatado
+                String telefoneCli = txtTelefone.getText();
 
-                    JOptionPane.showMessageDialog(panel1, "Todos os campos são obrigatórios. Por favor, preencha-os!", "Erro", JOptionPane.WARNING_MESSAGE);
+                // Verificação de campos vazios
+                if (nomeCli == null || nomeCli.trim().isEmpty() ||
+                        cpfCli == null || cpfCli.trim().isEmpty() ||
+                        telefoneCli == null || telefoneCli.trim().isEmpty()) {
+
+                    JOptionPane.showMessageDialog(panel1,
+                            "Todos os campos são obrigatórios. Por favor, preencha-os!",
+                            "Erro", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
-                CadastroCli cliente = new CadastroCli(nome, cpf, telefone);
-
+                CadastroCli cliente = new CadastroCli(nomeCli, cpfCli, telefoneCli);
                 clientes.add(cliente);
 
-                JOptionPane.showMessageDialog(panel1, "Cliente cadastrado com sucesso:\n" + cliente, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(panel1,
+                        "Cliente cadastrado com sucesso:\n"
+                                + "Nome: " + nomeCli + "\n"
+                                + "CPF: " + txtCpf.getText() + "\n" // CPF formatado
+                                + "Telefone: " + txtTelefone.getText(), // Telefone formatado
+                        "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
-                // Limpa os campos da GUI após o cadastro
-                txtNomeCli.setText("Digite o nome do cliente");
-                txtCpf.setText("000.000.000-00");
-                txtTelefone.setText("(00) 00000-0000");
+
+                // Limpar campos após o cadastro
+                txtNomeCli.setText("");
+                txtCpf.setValue(null); // Limpa a máscara
+                txtTelefone.setValue(null); // Limpa a máscara
+            }
+        });
+
+        cancelarCadastroButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(panel1, "Cadastro Cancelado.", "Cancelado", JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }
@@ -87,5 +121,4 @@ public class SistemaLocacaoEquipamento extends JFrame {
             frame.setVisible(true); // Torna a janela visível
         });
     }
-
 }
