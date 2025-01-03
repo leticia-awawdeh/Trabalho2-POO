@@ -14,7 +14,8 @@ public class Equipamento {
     private double valorDiario; // Valor diário do aluguel
     private Status status;
     private LocalDate dataPrevistaDevolucao; // Data prevista para devolução
-    private CadastroCli cliente; // Cliente associado ao aluguel do equipamento
+    private CadastroCli cliente;
+    private int frequenciaAluguel;// Cliente associado ao aluguel do equipamento
 
     public Equipamento(String nome, String descricao, double valorDiario) {
         this.codigo = gerarCodigoEquip(); // Código gerado automaticamente
@@ -47,9 +48,20 @@ public class Equipamento {
         this.dataPrevistaDevolucao = dataPrevistaDevolucao;
     }
 
+    public int getFrequenciaAluguel() {
+        return frequenciaAluguel;
+    }
+
+    public void incrementarFrequenciaAluguel() {
+        this.frequenciaAluguel++;
+    }
+
+
     public int getCodigo() {
         return codigo;
     }
+
+
 
     public String getNome() {
         return nome;

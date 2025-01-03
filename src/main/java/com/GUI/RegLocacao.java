@@ -151,6 +151,9 @@ public class RegLocacao {
                 // Registrar locação no sistema
                 GerenciadorDados.registrarLocacao(cliente, equipamentoSelecionado);
 
+                equipamentoSelecionado.incrementarFrequenciaAluguel(); // Incrementa o contador de aluguel
+                GerenciadorDados.notificarAtualizacao();
+
                 // Exibir informações da locação para o usuário
                 double valorDiario = equipamentoSelecionado.getValorDiario(); // Supondo que Equipamento tenha um método getValorDiario()
                 double valorTotal = valorDiario * diasLocacao;

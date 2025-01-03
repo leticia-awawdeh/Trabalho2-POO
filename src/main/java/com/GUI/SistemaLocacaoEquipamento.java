@@ -47,6 +47,9 @@ public class SistemaLocacaoEquipamento extends JFrame {
 
         DevolucaoEquipamentos devolucaoEquipamentos = new DevolucaoEquipamentos();
         PainelSis.addTab("Devolução de Equipamentos", devolucaoEquipamentos.getPanel());
+
+        GerarRelatorio gerarRelatorio = new GerarRelatorio();
+        PainelSis.addTab("Gerar Relatório", gerarRelatorio.getPanel());
 //
         setContentPane(PainelSis);
         setTitle("Sistema de Locação de Equipamentos");
