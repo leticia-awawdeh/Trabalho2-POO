@@ -1,8 +1,12 @@
-import com.GUI.RegLocacao;
+package com.GUI;
+
+import com.Backend.Cliente;
+import com.Backend.Equipamento;
+import com.Backend.GerenciadorDados;
+import com.Backend.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.Backend.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;

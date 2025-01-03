@@ -1,13 +1,12 @@
 package com.GUI;
 
 import com.Backend.*;
-import com.Backend.Utils;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class DevolucaoEquipamentos {

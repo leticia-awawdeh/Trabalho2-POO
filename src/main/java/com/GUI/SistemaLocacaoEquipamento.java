@@ -1,7 +1,8 @@
 package com.GUI;
 
+import com.Backend.Cliente;
 import com.Backend.Equipamento;
-import com.Backend.*;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,9 @@
+package com.GUI;
+
 import com.Backend.Equipamento;
 import com.Backend.Status;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CadastroEquipamentoTest {

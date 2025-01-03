@@ -1,8 +1,8 @@
-import com.GUI.SistemaLocacaoEquipamento;
+package com.GUI;
+
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
-
 import java.awt.*;
 
 import static org.junit.jupiter.api.Assertions.*;

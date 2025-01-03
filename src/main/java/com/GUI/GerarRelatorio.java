@@ -1,18 +1,20 @@
 package com.GUI;
 
-import com.Backend.*;
-
-import java.io.File;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import com.itextpdf.kernel.pdf.PdfWriter;
+import com.Backend.Cliente;
+import com.Backend.Equipamento;
+import com.Backend.GerenciadorDados;
+import com.Backend.Utils;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class GerarRelatorio {

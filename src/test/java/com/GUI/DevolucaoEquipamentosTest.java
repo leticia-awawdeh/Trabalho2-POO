@@ -1,3 +1,5 @@
+package com.GUI;
+
 import com.Backend.*;
 import junit.framework.TestCase;
 

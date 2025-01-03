@@ -1,5 +1,9 @@
-import com.Backend.*;
-import com.GUI.GerarRelatorio;
+package com.GUI;
+
+import com.Backend.Cliente;
+import com.Backend.Equipamento;
+import com.Backend.GerenciadorDados;
+import com.Backend.Locacao;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
