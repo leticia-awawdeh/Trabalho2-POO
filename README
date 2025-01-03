@@ -1,0 +1,101 @@
+
+# Sistema de Locação de Equipamentos
+
+Este é um sistema destinado à locação de equipamentos, realizado com interface gráfica utilizando Java Swing, projetado para suportar o gerenciamento de clientes, equipamentos, locações, devoluções e geração de relatórios.
+
+---
+
+## 🔗 Índice  
+  
+- [Funcionalidades Principais](#-funcionalidades-principais)  
+- [Requisitos para Execução](#-requisitos-para-execução)  
+- [Como Configurar e Executar o Projeto](#-como-configurar-e-executar-o-projeto)  
+  - [Configuração do Ambiente](#1-configuração-do-ambiente)  
+  - [Importação das Dependências Externas](#2-importação-das-dependências-externas)  
+  - [Execução](#3-execução)  
+  - [Estrutura e Navegação](#4-estrutura-e-navegação)  
+- [Execução dos Testes](#-execução-dos-testes)  
+- [Estrutura dos Pacotes](#-estrutura-dos-pacotes)  
+- [Contribuições](#-contribuições)  
+- ---
+
+## 🛠 Funcionalidades Principais
+
+- **Cadastro de Clientes:** Registre novos clientes com validação de CPF e número de telefone.
+- **Cadastro de Equipamentos:** Adicione novos equipamentos com descrição, preço de locação diária e status.
+- **Registro de Locações:** Realize a locação de equipamentos disponíveis, vinculando-os a clientes.
+- **Devolução de Equipamentos:** Gerencie devoluções com cálculo automático de multas por atraso.
+- **Geração de Relatórios:** Gere relatórios detalhados, exportados em formato PDF, sobre clientes e equipamentos.
+
+---
+
+## 🖥 Requisitos para Execução
+
+1. **Java Development Kit (JDK):** Versão 11 ou superior.
+2. **Bibliotecas Externas Utilizadas:**
+   - [`iText`](https://itextpdf.com/) (versão 7.2.x ou semelhante) – Para geração de relatórios em PDF.
+
+---
+
+## 📦 Como Configurar e Executar o Projeto
+
+1. Certifique-se de ter o **JDK 11** (ou superior) instalado em seu sistema e configurado no **`PATH`**.
+
+2. Faça o download do projeto e importe-o em sua IDE de preferência (IntelliJ IDEA é recomendado).
+
+---
+
+### 3. **Execução**
+
+1. Localize o arquivo `SistemaLocacaoEquipamento.java` no pacote `com.GUI`.
+
+2. Execute o método `main` na classe `SistemaLocacaoEquipamento` para iniciar a aplicação.
+   - O sistema abrirá uma interface gráfica dividida em abas.
+
+### 4. **Estrutura e Navegação**
+
+- Ao abrir a aplicação, você encontrará as seguintes abas disponíveis:
+  - **Cadastro de Cliente**: Aba para adicionar novos clientes.
+  - **Cadastro de Equipamentos**: Aba para registrar novos equipamentos.
+  - **Registro de Locação**: Aba para locar equipamentos disponíveis.
+  - **Devolução de Equipamentos**: Aba para gerenciar devoluções de locações.
+  - **Gerar Relatório**: Aba para gerar relatórios de clientes e equipamentos em formato PDF.
+
+---
+
+## 🧪 Execução dos Testes
+
+Testes unitários foram configurados utilizando `JUnit 5`. Para executá-los:
+
+1. Localize a classe de teste: `SistemaLocacaoEquipamentoTest` no pacote `com.GUI`.
+2. Execute os testes diretamente pela IDE:
+   - Clique com o botão direito no arquivo e selecione `Run SistemaLocacaoEquipamentoTest`.
+3. Verifique os casos de teste para validar componentes visuais e comportamentos principais da interface gráfica.
+
+---
+
+## 📁 Estrutura dos Pacotes
+
+- **`com.Backend`**: Contém classes relacionadas à lógica de negócio, incluindo:
+  - `Cliente.java`
+  - `Equipamento.java`
+  - `GerenciadorDados.java` (Central de dados da aplicação)
+  - `Locacao.java`
+  - `Utils.java` (Funções utilitárias).
+  
+- **`com.GUI`**: Contém classes relacionadas à interface gráfica (Java Swing):
+  - `SistemaLocacaoEquipamento.java` (Ponto de entrada da aplicação)
+  - `CadastroCliente.java` (Abas e formulários de cadastro)
+  - `CadastroEquipamento.java`
+  - `RegLocacao.java`
+  - `DevolucaoEquipamentos.java`
+  - `GerarRelatorio.java`
+
+
+
+---
+
+## 🤝 Contribuições
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir um pull request ou registrar problemas encontrados na aplicação.
+
