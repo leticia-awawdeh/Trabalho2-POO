@@ -1,6 +1,5 @@
 package com.GUI;
 
-import com.Backend.CadastroCli;
 import com.Backend.Equipamento;
 import com.Backend.GerenciadorDados;
 import javax.swing.*;
@@ -10,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.List;
 import java.util.Locale;
 
 public class CadastroEquipamento {

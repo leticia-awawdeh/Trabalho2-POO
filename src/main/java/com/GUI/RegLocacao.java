@@ -63,12 +63,12 @@ public class RegLocacao {
             @Override
             public void keyReleased(KeyEvent event) {
                 String cpfDigitado = txtCpfCli.getText(); // Obtém o CPF digitado com máscara.
-                CadastroCli cliente = buscarClientePorCpf(cpfDigitado);
+                Cliente cliente = buscarClientePorCpf(cpfDigitado);
 
                 if (cliente != null) {
                     // Preenche os campos se o cliente for encontrado
                     txtNomeCli.setText(cliente.getNomeCli());
-                    txtTelefoneCli.setText(cliente.getTelefone());
+                    txtTelefoneCli.setText(cliente.getTelefoneCli());
                 } else {
                     // Limpa os campos caso o cliente não seja encontrado
                     txtNomeCli.setText("");
@@ -108,7 +108,7 @@ public class RegLocacao {
 
                 // Validar o cliente (CPF)
                 String cpfCliente = txtCpfCli.getText();
-                CadastroCli cliente = buscarClientePorCpf(cpfCliente);
+                Cliente cliente = buscarClientePorCpf(cpfCliente);
                 if (cliente == null) {
                     JOptionPane.showMessageDialog(regLoc,
                             "Cliente não encontrado. Verifique o CPF e tente novamente.",
@@ -140,6 +140,7 @@ public class RegLocacao {
                 );
 
                 // Associar o cliente ao equipamento
+                equipamentoSelecionado.incrementarFrequenciaAluguel();
                 equipamentoSelecionado.setCliente(cliente);
                 equipamentoSelecionado.setStatus(Status.ALUGADO);
 
@@ -170,7 +171,7 @@ public class RegLocacao {
         });
     }
     double valorLoc;
-    private double calcularValorLocacao(double valorDiario, long dias) {
+    public double calcularValorLocacao(double valorDiario, long dias) {
         valorLoc = valorDiario * dias;
         return valorLoc;
     }
@@ -179,7 +180,7 @@ public class RegLocacao {
         return String.format("R$ %.2f", valor);
     }
 
-    private long calcularDiasEntreDatas(LocalDate inicio, LocalDate termino) {
+    public static long calcularDiasEntreDatas(LocalDate inicio, LocalDate termino) {
         return java.time.temporal.ChronoUnit.DAYS.between(inicio, termino);
     }
 
@@ -207,13 +208,13 @@ public class RegLocacao {
         dropDwnEquip.setSelectedIndex(0);
     }
 
-    private CadastroCli buscarClientePorCpf(String cpf) {
+    public Cliente buscarClientePorCpf(String cpf) {
         // Remove a formatação para buscar apenas pelos números
         String cpfSemFormatacao = cpf.replaceAll("[^\\d]", "");
 
-        List<CadastroCli> clientes = GerenciadorDados.getListaClientes();
+        List<Cliente> clientes = GerenciadorDados.getListaClientes();
         return clientes.stream()
-                .filter(cli -> cli.getCpf().replaceAll("[^\\d]", "").equals(cpfSemFormatacao)) // Compara sem formatação
+                .filter(cli -> cli.getCpfCli().replaceAll("[^\\d]", "").equals(cpfSemFormatacao)) // Compara sem formatação
                 .findFirst()
                 .orElse(null);
     }
@@ -248,4 +249,8 @@ public class RegLocacao {
     public JPanel getPanel() {
         return regLoc;
     }
+
+
+
+
 }

@@ -1,6 +1,5 @@
 package com.Backend;
 
-import java.time.LocalDate;
 import java.util.Random;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,10 +12,10 @@ public class Equipamento {
     private String descricao; // Descrição do equipamento
     private double valorDiario; // Valor diário do aluguel
     private Status status;
-    private LocalDate dataPrevistaDevolucao; // Data prevista para devolução
-    private CadastroCli cliente;
+//    private LocalDate dataPrevistaDevolucao; // Data prevista para devolução
+    private Cliente cliente;
     private int frequenciaAluguel;
-    private CadastroCli clienteAluguel;// Cliente associado ao aluguel do equipamento
+    private Cliente clienteAluguel;// Cliente associado ao aluguel do equipamento
 
     public Equipamento(String nome, String descricao, double valorDiario) {
         this.codigo = gerarCodigoEquip(); // Código gerado automaticamente
@@ -40,16 +39,16 @@ public class Equipamento {
     }
 
     // Getters e Setters
-    public CadastroCli getClienteAluguel() {
+    public Cliente getClienteAluguel() {
         return clienteAluguel;
     }
 
-    public void setClienteAluguel(CadastroCli clienteAluguel) {
+    public void setClienteAluguel(Cliente clienteAluguel) {
         this.clienteAluguel = clienteAluguel;
     }
-    public LocalDate getDataPrevistaDevolucao() {
-        return dataPrevistaDevolucao;
-    }
+//    public LocalDate getDataPrevistaDevolucao() {
+//        return dataPrevistaDevolucao;
+//    }
 
 
 
@@ -88,11 +87,15 @@ public class Equipamento {
         return status;
     }
 
+    public String getDescricao(){
+        return descricao;
+    }
+
     public void setStatus(Status status) {
         this.status = status;
     }
 
-    public CadastroCli getCliente() {
+    public Cliente getCliente() {
         return cliente;
     }
 
@@ -100,7 +103,7 @@ public class Equipamento {
         return frequenciaAluguel * valorDiario; // Multiplica as locações pelo valor diário
     }
 
-    public void setCliente(CadastroCli cliente) {
+    public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
 

@@ -1,6 +1,6 @@
 package com.GUI;
 
-import com.Backend.CadastroCli;
+import com.Backend.Cliente;
 import com.Backend.GerenciadorDados;
 
 import javax.swing.*;
@@ -15,14 +15,14 @@ public class CadastroCliente {
     private JTextField txtNomeCli;
     private JFormattedTextField txtTelefone;
     private JFormattedTextField txtCpf;
-    private JButton btnSalvarCadCli;
-    private JButton btnCancelarCadastro;
+    public JButton btnSalvarCadCli;
+    public JButton btnCancelarCadastro;
     private JPanel panelCadastroCliente;
 
-    private List<CadastroCli> clientes;
+    private List<Cliente> clientes;
 
     // Construtor da interface
-    public CadastroCliente(List<CadastroCli> clientes) {
+    public CadastroCliente(List<Cliente> clientes) {
         this.clientes = clientes;
 
         panelCadastroCliente = new JPanel(); // Inicializa o painel principal
@@ -122,7 +122,7 @@ public class CadastroCliente {
                 }
 
                 // Cria o objeto cliente com CPF sem formatação
-                CadastroCli cliente = new CadastroCli(nomeCli, cpfCli, telefoneCli);
+                Cliente cliente = new Cliente(nomeCli, cpfCli, telefoneCli);
 
                 // Adiciona o cliente no GerenciadorDados
                 GerenciadorDados.adicionarCliente(cliente);

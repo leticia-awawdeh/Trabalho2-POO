@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class GerenciadorDados {
     private static List<Equipamento> listaEquipamentos = new ArrayList<>();
-    private static List<CadastroCli> listaClientes = new ArrayList<>();
+    private static List<Cliente> listaClientes = new ArrayList<>();
     private static List<Locacao> listaLocacoes = new ArrayList<>();// Lista de clientes
 
     private static List<AtualizacaoListener> listeners = new ArrayList<>(); // Lista de ouvintes
@@ -35,7 +35,7 @@ public class GerenciadorDados {
     /**
      * Obtém a lista completa de clientes cadastrados.
      */
-    public static List<CadastroCli> getListaClientes() {
+    public static List<Cliente> getListaClientes() {
         return listaClientes;
     }
 
@@ -49,33 +49,61 @@ public class GerenciadorDados {
 
     // Opcional: Para debug, exibir locações registradas
     public static void listarLocacoes() {
-        listaLocacoes.forEach(loc -> System.out.println("Cliente CPF: " + loc.getCliente().getCpf()));
+        listaLocacoes.forEach(loc -> System.out.println("Cliente CPF: " + loc.getCliente().getCpfCli()));
     }
 
-    public static List<CadastroCli> calcularMultasPorCliente() {
-        // Percorre todos os clientes e acumula o valor das multas
-        for (CadastroCli cliente : listaClientes) {
-            double totalMultas = cliente.getListaMultas() // Supondo que o cliente tenha uma lista de multas
-                    .stream()
-                    .mapToDouble(Multa::getValor) // Soma os valores das multas
+    public static List<Cliente> calcularMultasPorCliente() {
+        // Itera sobre cada cliente registrado
+        for (Cliente cliente : listaClientes) {
+            // Seleciona as locações associadas a este cliente
+            List<Locacao> locacoesCliente = listaLocacoes.stream()
+                    .filter(locacao -> locacao.getCliente() != null && locacao.getCliente().equals(cliente))
+                    .toList();
+
+            // Calcula o total de multas por cliente
+            double totalMultas = locacoesCliente.stream()
+                    .mapToDouble(Locacao::calcularMulta)
                     .sum();
 
-            // Define o total de multas no cliente
+            // Atualiza apenas se houver multas acumuladas
             cliente.setMultasTotais(totalMultas);
         }
-        return getListaClientes()
-                .stream()
-                .filter(cli -> cli.getListaMultas() != null && !cli.getListaMultas().isEmpty())
-                .peek(cli -> {
-                    // Calcule as multas aqui
-                })
-                .toList(); // Retorna a lista atualizada
+
+        // Retorna clientes com multas acumuladas maiores que 0
+        return listaClientes.stream()
+                .filter(cli -> cli.getMultasTotais() > 0) // Apenas clientes com multas
+                .toList();
+    }
+
+    private static double getTotalMultas() {
+        double totalMultas = 0.0;
+
+        for (Locacao locacao : listaLocacoes) {
+            // Verifica se a data de devolução é posterior à permitida
+            if (locacao.getDataDevolucao().isAfter(locacao.getDataPrevistaDevolucao())) {
+                // Calcula a diferença de dias entre a devolução e a data prevista
+                long diasAtraso = locacao.getDataPrevistaDevolucao().until(locacao.getDataDevolucao()).getDays();
+                // Calcula multa para os dias atrasados (exemplo: R$ 10,00 por dia de atraso)
+                totalMultas += diasAtraso * 10.0;
+            }
+        }
+        return totalMultas;
     }
 
     /**
      * Adiciona um cliente à lista de clientes.
      */
-    public static void adicionarCliente(CadastroCli cliente) {
+    public static void adicionarCliente(Cliente cliente) {
+        // Verifica se o CPF já está cadastrado
+        boolean cpfCadastrado = listaClientes.stream()
+                .anyMatch(cli -> cli.getCpfCli().equals(cliente.getCpfCli()));
+
+        if (cpfCadastrado) {
+            throw new IllegalArgumentException("Cliente com CPF já cadastrado.");
+        } if (cliente == null){
+            throw new IllegalArgumentException("Cliente não pode ser nulo.");
+        }
+
         listaClientes.add(cliente);
         notificarAtualizacao(); // Notifica listeners sobre a mudança
     }
@@ -83,14 +111,14 @@ public class GerenciadorDados {
     /**
      * Remove um cliente da lista de clientes.
      */
-    public static void removerCliente(CadastroCli cliente) {
+    public static void removerCliente(Cliente cliente) {
         listaClientes.remove(cliente);
         notificarAtualizacao();
     }
 
     public static boolean isCpfCadastrado(String cpf) {
-        for (CadastroCli cliente : listaClientes) { // "listaClientes" é o nome correto da variável
-            if (cliente.getCpf().equals(cpf)) {
+        for (Cliente cliente : listaClientes) { // "listaClientes" é o nome correto da variável
+            if (cliente.getCpfCli().equals(cpf)) {
                 return true;
             }
         }
@@ -98,8 +126,8 @@ public class GerenciadorDados {
     }
 
     public static boolean isTelefoneCadastrado(String telefone){
-        for (CadastroCli cliente : listaClientes){
-            if (cliente.getTelefone().equals(telefone)){
+        for (Cliente cliente : listaClientes){
+            if (cliente.getTelefoneCli().equals(telefone)){
                 return true;
             }
         }
@@ -170,12 +198,12 @@ public class GerenciadorDados {
          */
         private List<String> buscarCpfsCompatíveis(String inputCpf) {
             // Obtém a lista de clientes do GerenciadorDados
-            List<CadastroCli> listaClientes = GerenciadorDados.getListaClientes();
+            List<Cliente> listaClientes = GerenciadorDados.getListaClientes();
 
             // Realiza a filtragem baseada no input fornecido
             return listaClientes.stream()
-                    .map(CadastroCli::getCpf)  // Obtém todos os CPFs
-                    .filter(cpf -> cpf.contains(inputCpf)) // Filtra os que contêm o texto digitado
+                    .map(Cliente::getCpfCli)  // Obtém todos os CPFs
+                    .filter(cpf -> ((String) cpf).contains(inputCpf)) // Filtra os que contêm o texto digitado
                     .collect(Collectors.toList()); // Converte para lista
         }
 
@@ -201,12 +229,18 @@ public class GerenciadorDados {
     }
 
     // Método para associar um cliente a um equipamento alugado
-    public static void registrarLocacao(CadastroCli cliente, Equipamento equipamento) {
-        if (cliente != null && equipamento != null) {
-            equipamento.setCliente(cliente);
-            equipamento.setStatus(Status.ALUGADO);
-            notificarAtualizacao(); // Notifica os componentes sobre a alteração
+    public static void registrarLocacao(Cliente cliente, Equipamento equipamento) {
+        if (cliente == null) {
+            throw new IllegalArgumentException("Cliente não pode ser nulo.");
         }
+
+        if (equipamento == null) {
+            throw new IllegalArgumentException("O equipamento não pode ser nulo.");
+        }
+
+        equipamento.setCliente(cliente);
+        equipamento.setStatus(Status.ALUGADO);
+        notificarAtualizacao(); // Notifica os componentes sobre a alteração
     }
 
     // Método para encontrar um equipamento alugado por CPF do cliente
@@ -218,7 +252,7 @@ public class GerenciadorDados {
                 .filter(equip ->
                         equip.getStatus() == Status.ALUGADO &&
                                 equip.getCliente() != null &&
-                                equip.getCliente().getCpf().replaceAll("[^\\d]", "").equals(cpfDigitado))
+                                equip.getCliente().getCpfCli().replaceAll("[^\\d]", "").equals(cpfDigitado))
                 .findFirst();
     }
 }

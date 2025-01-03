@@ -3,14 +3,11 @@ package com.GUI;
 import com.Backend.*;
 import com.Backend.Utils;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 public class DevolucaoEquipamentos {
@@ -33,7 +30,6 @@ public class DevolucaoEquipamentos {
             e.printStackTrace();
         }
 
-
         btnConfDevolucao.addActionListener(e -> confirmarDevolucao());
 
         btnBuscarLoc.addActionListener(e -> buscarLocacao(txtCpf.getText()));
@@ -44,9 +40,9 @@ public class DevolucaoEquipamentos {
         String cpfDigitado = txtCpf.getText().replaceAll("[^\\d]", ""); // Remove pontuações
 
         // Busca cliente pelo CPF
-        Optional<CadastroCli> clienteOpt = GerenciadorDados.getListaClientes()
+        Optional<Cliente> clienteOpt = GerenciadorDados.getListaClientes()
                 .stream()
-                .filter(cli -> cli.getCpf().replaceAll("[^\\d]", "").equals(cpfDigitado))
+                .filter(cli -> cli.getCpfCli().replaceAll("[^\\d]", "").equals(cpfDigitado))
                 .findFirst();
 
         if (clienteOpt.isEmpty()) {
@@ -57,20 +53,24 @@ public class DevolucaoEquipamentos {
             return;
         }
 
-        CadastroCli cliente = clienteOpt.get();
+        Cliente cliente = clienteOpt.get();
 
         // Buscar equipamento alugado do cliente
-        Optional<Equipamento> equipamentoOpt = GerenciadorDados.buscarEquipamentoAlugadoPorCpf(cpfDigitado);
+        Optional<Locacao> locacaoOpt = GerenciadorDados.getListaLocacoes()
+                .stream()
+                .filter(locacao -> locacao.getCliente().getCpfCli().equals(cliente.getCpfCli()))
+                .findFirst();
 
-        if (equipamentoOpt.isEmpty()) {
+        if (locacaoOpt.isEmpty()) {
             JOptionPane.showMessageDialog(panelDevolucao,
-                    "Nenhum equipamento alugado encontrado para esse cliente.",
+                    "Nenhuma locação ativa encontrada para esse cliente.",
                     "Erro", JOptionPane.WARNING_MESSAGE);
             lblResult.setText("");
             return;
         }
 
-        Equipamento equipamento = equipamentoOpt.get();
+        Locacao locacao = locacaoOpt.get();
+        Equipamento equipamento = locacao.getEquipamento();
 
         // Exibir detalhes no painel
         lblResult.setText(String.format(
@@ -81,93 +81,77 @@ public class DevolucaoEquipamentos {
                         "Valor da Locação: R$ %s</html>",
                 equipamento.getNome(),
                 cliente.getNomeCli(),
-                Locacao.getDataInicio().format(dateFormatter),
-                Locacao.getDataPrevistaDevolucao().format(dateFormatter),
+                locacao.getDataInicio().format(dateFormatter),
+                locacao.getDataPrevistaDevolucao().format(dateFormatter),
                 Utils.formatarMonetario(equipamento.getValorDiario())
-
         ));
 
         // Armazenar o equipamento no painel
-        panelResult.putClientProperty("equipamentoSelecionado", equipamento);
+        panelResult.putClientProperty("locacaoSelecionada", locacao);
     }
 
     // Método para confirmar devolução
     private void confirmarDevolucao() {
-        Object equipamentoObj = panelResult.getClientProperty("equipamentoSelecionado");
+        Object locacaoObj = panelResult.getClientProperty("locacaoSelecionada");
 
-        if (equipamentoObj == null || !(equipamentoObj instanceof Equipamento)) {
+        if (locacaoObj == null || !(locacaoObj instanceof Locacao)) {
             JOptionPane.showMessageDialog(panelDevolucao,
-                    "Nenhum equipamento selecionado ou encontrado. Tente buscar novamente.",
+                    "Nenhuma locação selecionada ou encontrada. Tente buscar novamente.",
                     "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        Equipamento equipamento = (Equipamento) equipamentoObj;
+        // Obtém a locação e equipamento associados
+        Locacao locacao = (Locacao) locacaoObj;
+        Equipamento equipamento = locacao.getEquipamento();
 
+        // Atualizar status do equipamento
         equipamento.setStatus(Status.DISPONIVEL);
         equipamento.setCliente(null);
 
-        GerenciadorDados.notificarAtualizacao();
-
-        // Limpa a seleção no painel
-        panelResult.putClientProperty("equipamentoSelecionado", null);
-
-
-        // Obtém a data de devolução diretamente do sistema
+        // Calcula dias de atraso e multa
         LocalDate dataDevolucao = LocalDate.now();
+        locacao.setDataDevolucao(dataDevolucao);
+        long diasAtraso = locacao.getDiasAtraso();
+        double multa = locacao.calcularMulta();
+        double valorAluguel = locacao.getValorDiario() * locacao.getQuantidadeDiasLocacao();
 
-        // Calcular multa e total a pagar
-        LocalDate dataTerminoLocacao = Locacao.getDataPrevistaDevolucao();
-        long diasExcedentes = java.time.temporal.ChronoUnit.DAYS.between(dataTerminoLocacao, dataDevolucao);
-        double multa = diasExcedentes > 0 ? diasExcedentes * (equipamento.getValorDiario() * 0.2) : 0.0;
-        double total = equipamento.getValorDiario() + multa;
+        // Calcula o total
+        double total = valorAluguel + multa;
 
-        if (diasExcedentes > 0) { // Se houver dias excedentes
-            // Vincula a multa ao cliente correspondente
-            CadastroCli cliente = equipamento.getCliente(); // Obtém o cliente associado ao equipamento
+        // Se houver atraso, atualiza o histórico de multas do cliente
+        if (diasAtraso > 0) {
+            Cliente cliente = locacao.getCliente();
             if (cliente != null) {
-                // Cria uma nova instância de multa e adiciona à lista de multas do cliente
-                Multa novaMulta = new Multa(
-                        "Atraso de " + diasExcedentes + " dia(s) na devolução do equipamento " +
-                                equipamento.getNome() + ".", multa);
-                cliente.getListaMultas().add(novaMulta);
-
-                // Atualiza o total de multas do cliente
-                double multasTotais = cliente.getListaMultas()
-                        .stream()
-                        .mapToDouble(Multa::getValor)
-                        .sum();
-                cliente.setMultasTotais(multasTotais);
+                String descricaoMulta = String.format(
+                        "Atraso de %d dia(s) na devolução do equipamento %s.",
+                        diasAtraso,
+                        equipamento.getNome()
+                );
+                cliente.adicionarMulta(descricaoMulta, multa);
             }
         }
-
-        // Atualizar status para "Disponível"
-        equipamento.setStatus(Status.DISPONIVEL);
-        equipamento.setCliente(null); // Remove o vínculo com o cliente
-        GerenciadorDados.notificarAtualizacao();
 
         // Exibir resumo no lblResult
         lblResult.setText(String.format(
                 "<html>Resumo da Devolução:<br><br>" +
                         "Equipamento: %s<br>" +
-                        "Data de Término: %s<br>" +
+                        "Data Prevista de Término: %s<br>" +
                         "Data de Devolução: %s<br>" +
                         "Multa por atraso: R$ %s<br>" +
                         "Valor do Aluguel: R$ %s<br>" +
                         "Total a Pagar: R$ %s</html>",
                 equipamento.getNome(),
-                dataTerminoLocacao.format(dateFormatter),
+                locacao.getDataPrevistaDevolucao().format(dateFormatter),
                 dataDevolucao.format(dateFormatter),
-                Utils.formatarMonetario(multa), // Formata multa
-                Utils.formatarMonetario(Locacao.getValorDiario()), // Formata valor diário
-                Utils.formatarMonetario(total) // Formata total
+                Utils.formatarMonetario(multa),
+                Utils.formatarMonetario(valorAluguel),
+                Utils.formatarMonetario(total)
         ));
 
-        // Limpar a seleção no painel
-        panelResult.putClientProperty("equipamentoSelecionado", null);
+        // Limpar seleção no painel
+        panelResult.putClientProperty("locacaoSelecionada", null);
     }
-
-
 
     public JPanel getPanel() {
         return panelDevolucao;

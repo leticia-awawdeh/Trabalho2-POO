@@ -21,12 +21,12 @@ public class GerarRelatorio {
     private JPanel panelRelatorio;
 
     public GerarRelatorio() {
-//        btnRelatorioCli.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                gerarRelatorioClientes();
-//            }
-//        });
+        btnRelatorioCli.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gerarRelatorioClientes();
+            }
+        });
 
         btnRelatorioEquip.addActionListener(new ActionListener() {
             @Override
@@ -34,18 +34,12 @@ public class GerarRelatorio {
                 gerarRelatorioEquipamentos();
             }
         });
-        btnRelatorioCli.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
 
-                gerarRelatorioClientes();
-            }
-        });
     }
 
     // Método que gera relatório de clientes em PDF
     private void gerarRelatorioClientes() {
-        List<CadastroCli> clientesAtualizados = GerenciadorDados.calcularMultasPorCliente();
+        //List<CadastroCli> clientesAtualizados = GerenciadorDados.calcularMultasPorCliente();
         try {
             String documentosPath = System.getProperty("user.home") + "\\Documents";
             String relatoriosPath = documentosPath + "\\Relatórios";
@@ -87,7 +81,7 @@ public class GerarRelatorio {
             document.add(new Paragraph("Relatório de Clientes - Ranking de Multas Acumuladas").setFont(com.itextpdf.kernel.font.PdfFontFactory.createFont(com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD)));
 
             // Obtém a lista de clientes e calcula as multas acumuladas
-            List<CadastroCli> clientesOrdenados = GerenciadorDados.getListaClientes()
+            List<Cliente> clientesOrdenados = GerenciadorDados.getListaClientes()
                     .stream()
                     .sorted((c1, c2) -> Double.compare(c2.getMultasTotais(), c1.getMultasTotais())) // Ordena decrescente
                     .toList();
@@ -98,12 +92,12 @@ public class GerarRelatorio {
 
             // Adiciona os clientes ordenados ao relatório
             int posicao = 1;
-            for (CadastroCli cliente : clientesOrdenados) {
+            for (Cliente cliente : clientesOrdenados) {
                 String clienteInfo = String.format(
                         "%-5d | %-25s | %-15s | R$ %-12s",
                         posicao,
                         cliente.getNomeCli(),
-                        cliente.getCpf(),
+                        cliente.getCpfCli(),
                         Utils.formatarMonetario(cliente.getMultasTotais()) // Formata o valor
                 );
                 document.add(new Paragraph(clienteInfo));
