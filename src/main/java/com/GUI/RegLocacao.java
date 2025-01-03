@@ -12,18 +12,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class RegLocacao {
     private JComboBox<String> dropDwnEquip;
     private JButton btnRegistrarLoc;
     private JButton btnCancelarLoc;
-    private JTextField txtDataTermino;
-    private JTextField txtDataInicio;
+    private JFormattedTextField txtDataTermino;
+    private JFormattedTextField txtDataInicio;
     private JTextField txtTelefoneCli;
     private JFormattedTextField txtCpfCli;
     private JTextField txtNomeCli;
     private JPanel regLoc;
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public RegLocacao() {
         carregarEquipamentos();
@@ -33,6 +37,12 @@ public class RegLocacao {
             MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
             cpfMask.setPlaceholderCharacter('_');
             txtCpfCli.setFormatterFactory(new DefaultFormatterFactory(cpfMask));
+
+            MaskFormatter dateMask = new MaskFormatter("##/##/####");
+            dateMask.setPlaceholderCharacter('_');
+
+            txtDataInicio.setFormatterFactory(new DefaultFormatterFactory(dateMask));
+            txtDataTermino.setFormatterFactory(new DefaultFormatterFactory(dateMask));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,6 +82,32 @@ public class RegLocacao {
         btnRegistrarLoc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                String dataInicioStr = txtDataInicio.getText();
+                String dataTerminoStr = txtDataTermino.getText();
+
+                // Validar e converter as datas
+                LocalDate dataInicio;
+                LocalDate dataTermino;
+                try {
+                    dataInicio = LocalDate.parse(dataInicioStr, dateFormatter);
+                    dataTermino = LocalDate.parse(dataTerminoStr, dateFormatter);
+                } catch (DateTimeParseException ex) {
+                    JOptionPane.showMessageDialog(regLoc,
+                            "Por favor, insira as datas no formato DD/MM/AAAA.",
+                            "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Calcular a quantidade de dias de locação
+                long diasLocacao = calcularDiasEntreDatas(dataInicio, dataTermino);
+                if (diasLocacao < 0) {
+                    JOptionPane.showMessageDialog(regLoc,
+                            "A data de término não pode ser anterior à data de início.",
+                            "Erro de Datas", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
                 // Valida se o cliente foi encontrado pelo CPF
                 String cpfCliente = txtCpfCli.getText();
                 CadastroCli cliente = buscarClientePorCpf(cpfCliente);
@@ -83,9 +119,8 @@ public class RegLocacao {
                     return;
                 }
 
-                // Obtém o equipamento selecionado
+                // Obter o equipamento selecionado
                 String nomeEquip = (String) dropDwnEquip.getSelectedItem();
-
                 if (nomeEquip == null || nomeEquip.equals("Selecione o equipamento") || nomeEquip.equals("Nenhum equipamento disponível")) {
                     JOptionPane.showMessageDialog(regLoc,
                             "Por favor, selecione um equipamento válido para registrar a locação.",
@@ -93,39 +128,47 @@ public class RegLocacao {
                     return;
                 }
 
-                // Busca o equipamento correspondente
-                List<Equipamento> equipamentos = GerenciadorDados.getListaEquipamentos();
-                for (Equipamento equipamento : equipamentos) {
-                    if (equipamento.getNome().equals(nomeEquip)) {
-                        if (equipamento.getStatus() == Status.DISPONIVEL) {
-                            // Marca o equipamento como alugado
-                            equipamento.setStatus(Status.ALUGADO);
+                // Buscar equipamento correspondente
+                Equipamento equipamentoSelecionado = GerenciadorDados.getListaEquipamentos()
+                        .stream()
+                        .filter(equip -> equip.getNome().equals(nomeEquip))
+                        .findFirst()
+                        .orElse(null);
 
-                            // Notifica listeners e atualiza a interface
-                            GerenciadorDados.notificarAtualizacao();
-                            atualizarDropdownEquipamentos();
-
-                            JOptionPane.showMessageDialog(regLoc,
-                                    "Locação registrada com sucesso para o cliente: " + cliente.getNomeCli() +
-                                            "\nEquipamento: " + equipamento.getNome(),
-                                    "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-                        } else {
-                            JOptionPane.showMessageDialog(regLoc,
-                                    "O equipamento selecionado já está alugado ou indisponível.",
-                                    "Erro", JOptionPane.WARNING_MESSAGE);
-                        }
-                        return;
-                    }
+                if (equipamentoSelecionado == null || equipamentoSelecionado.getStatus() != Status.DISPONIVEL) {
+                    JOptionPane.showMessageDialog(regLoc,
+                            "O equipamento selecionado já está alugado ou indisponível.",
+                            "Erro", JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
 
-                // Caso o equipamento não seja encontrado
+                // Define o status como alugado e vincula o cliente
+                equipamentoSelecionado.setStatus(Status.ALUGADO);
+
+                // *** Configura a data prevista de devolução ***
+                equipamentoSelecionado.setDataPrevistaDevolucao(dataTermino);
+
+                // Registrar locação no sistema
+                GerenciadorDados.registrarLocacao(cliente, equipamentoSelecionado);
+
+                // Exibir informações da locação para o usuário
+                double valorDiario = equipamentoSelecionado.getValorDiario(); // Supondo que Equipamento tenha um método getValorDiario()
+                double valorTotal = valorDiario * diasLocacao;
+
                 JOptionPane.showMessageDialog(regLoc,
-                        "Erro: Equipamento não encontrado.",
-                        "Erro", JOptionPane.ERROR_MESSAGE);
+                        "Locação registrada com sucesso!\n" +
+                                "Equipamento: " + equipamentoSelecionado.getNome() + "\n" +
+                                "Data de Início: " + dataInicio.format(dateFormatter) + "\n" +
+                                "Data Prevista de Devolução: " + dataTermino.format(dateFormatter) + "\n" +
+                                "Quantidade de Dias: " + diasLocacao + "\n",
+                        "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }
 
+    private long calcularDiasEntreDatas(LocalDate inicio, LocalDate termino) {
+        return java.time.temporal.ChronoUnit.DAYS.between(inicio, termino);
+    }
 
     private void atualizarDropdownEquipamentos() {
         // Limpa os itens do dropdown

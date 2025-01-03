@@ -1,5 +1,4 @@
 package com.Backend;
-import com.GUI.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -8,37 +7,29 @@ import java.util.List;
 public class CadastroCli {
 
     private String nomeCli;
-    private String cpfCli; //verificar qual formato de cpf é melhor
-    private String telefoneCli; //verificar qual formato de telefone é melhor (se necessita de DDD)
-    private List<Equipamento> equipAlug;
+    private String cpfCli; // CPF do cliente
+    private String telefoneCli; // Telefone do cliente
+    private List<Equipamento> equipAlug = new ArrayList<>(); // Lista de equipamentos alugados
     private LocalDate dataIni;
     private LocalDate dataDevol;
     private int qtdDiasAlug;
     private double multa;
 
-    // Construtores
-
+    // Construtor
     public CadastroCli(String nomeCli, String cpfCli, String telefoneCli) {
         this.nomeCli = nomeCli;
         this.cpfCli = cpfCli;
         this.telefoneCli = telefoneCli;
     }
 
-    // Métodos
-
-    // Adicionar com.Backend.Equipamento
+    // Adicionar equipamento ao cliente
     public void adicionarEquipamento(Equipamento equipamento) {
         if (equipamento.getStatus() == Status.DISPONIVEL) {
             equipAlug.add(equipamento);
             equipamento.setStatus(Status.ALUGADO); // Atualiza o status do equipamento
         } else {
-            throw new IllegalArgumentException("com.Backend.Equipamento não está disponível para locação.");
+            throw new IllegalArgumentException("Equipamento não está disponível para locação.");
         }
-    }
-
-    // Calcular quantidade de dias de locação
-    private int calcularDiasLocacao() {
-        return dataDevol.compareTo(dataIni); // Número de dias entre a devolução prevista e a data inicial
     }
 
     // Getters e Setters
@@ -54,7 +45,7 @@ public class CadastroCli {
         return cpfCli;
     }
 
-    public void setCpf(String cpf) {
+    public void setCpf(String cpfCli) {
         this.cpfCli = cpfCli;
     }
 
@@ -62,7 +53,7 @@ public class CadastroCli {
         return telefoneCli;
     }
 
-    public void setTelefone(String telefone) {
+    public void setTelefone(String telefoneCli) {
         this.telefoneCli = telefoneCli;
     }
 
@@ -72,5 +63,4 @@ public class CadastroCli {
                 "CPF: " + cpfCli + "\n" +
                 "Telefone Celular: " + telefoneCli;
     }
-
 }

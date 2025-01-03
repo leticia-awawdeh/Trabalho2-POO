@@ -92,7 +92,7 @@ public class CadastroCliente {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String nomeCli = txtNomeCli.getText();
-                String cpfCli = txtCpf.getText(); // CPF formatado
+                String cpfCli = txtCpf.getText().replaceAll("[^\\d]", ""); // Remove a formatação
                 String telefoneCli = txtTelefone.getText(); // Telefone formatado
 
                 // Verifica campos obrigatórios
@@ -106,7 +106,7 @@ public class CadastroCliente {
                     return;
                 }
 
-                // Cria o objeto cliente
+                // Cria o objeto cliente com CPF sem formatação
                 CadastroCli cliente = new CadastroCli(nomeCli, cpfCli, telefoneCli);
 
                 // Adiciona o cliente no GerenciadorDados

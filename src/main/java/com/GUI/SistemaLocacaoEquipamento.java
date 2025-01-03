@@ -16,11 +16,6 @@ public class SistemaLocacaoEquipamento extends JFrame {
     private JPanel panel1;
     private JTabbedPane PainelSis;
     private JComboBox<String> dropDwnEquip;
-    private JTextField textField6;
-    private JTextField textField7;
-    private JButton buscarButton1;
-    private JButton buscarButton;
-    private JButton confirmarDevoluçãoButton;
     private JComboBox comboBox2;
     private JButton baixarRegistroDeClientesButton;
     private JButton baixarRegistroDeEquipamentosButton;
@@ -49,6 +44,9 @@ public class SistemaLocacaoEquipamento extends JFrame {
 
         RegLocacao regLocacao = new RegLocacao();
         PainelSis.addTab("Registro de Locação", regLocacao.getPanel());
+
+        DevolucaoEquipamentos devolucaoEquipamentos = new DevolucaoEquipamentos();
+        PainelSis.addTab("Devolução de Equipamentos", devolucaoEquipamentos.getPanel());
 //
         setContentPane(PainelSis);
         setTitle("Sistema de Locação de Equipamentos");

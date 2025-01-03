@@ -5,6 +5,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class GerenciadorDados {
@@ -29,6 +30,7 @@ public class GerenciadorDados {
     }
 
     // ---------------- Métodos para Clientes ---------------- //
+
     /**
      * Obtém a lista completa de clientes cadastrados.
      */
@@ -53,6 +55,7 @@ public class GerenciadorDados {
     }
 
     // ---------------- Notificações ---------------- //
+
     /**
      * Adiciona um listener para ser notificado quando a lista de equipamentos ou clientes mudar.
      */
@@ -77,6 +80,7 @@ public class GerenciadorDados {
     }
 
     // ---------------- Interface Listener ---------------- //
+
     /**
      * Interface para observar mudanças na lista de equipamentos ou lista de clientes.
      */
@@ -142,5 +146,24 @@ public class GerenciadorDados {
         public JPanel getPanel() {
             return panelBuscaCpf;
         }
+    }
+
+    // Método para associar um cliente a um equipamento alugado
+    public static void registrarLocacao(CadastroCli cliente, Equipamento equipamento) {
+        if (cliente != null && equipamento != null) {
+            equipamento.setCliente(cliente);
+            equipamento.setStatus(Status.ALUGADO);
+            notificarAtualizacao(); // Notifica os componentes sobre a alteração
+        }
+    }
+
+    // Método para encontrar um equipamento alugado por CPF do cliente
+    public static Optional<Equipamento> buscarEquipamentoAlugadoPorCpf(String cpf) {
+        return listaEquipamentos
+                .stream()
+                .filter(equip -> equip.getStatus() == Status.ALUGADO
+                        && equip.getCliente() != null
+                        && equip.getCliente().getCpf().equals(cpf))
+                .findFirst(); // Retorna o equipamento alugado, se existir
     }
 }
