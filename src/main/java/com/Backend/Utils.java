@@ -12,15 +12,9 @@ public class Utils {
         symbols.setGroupingSeparator('.'); // Ponto para separar milhares
         symbols.setDecimalSeparator(','); // Vírgula para separar decimais
 
-        BRL_FORMATTER = new DecimalFormat("#,##0.00", symbols); // Formato de exemplo: 1.234,56
+        BRL_FORMATTER = new DecimalFormat("#,##0.00", symbols);
     }
 
-    /**
-     * Formata um valor monetário no padrão brasileiro.
-     *
-     * @param valor O valor a ser formatado.
-     * @return Uma String no formato "1.234,56".
-     */
     public static String formatarMonetario(double valor) {
         return BRL_FORMATTER.format(valor);
     }

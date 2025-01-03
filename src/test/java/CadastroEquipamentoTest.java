@@ -105,7 +105,6 @@ public class CadastroEquipamentoTest {
         Equipamento equipamento1 = new Equipamento("Drone", "Drone 4K", 300);
         Equipamento equipamento2 = new Equipamento("Drone Pro", "Drone Pro 4K", 400);
 
-        assertFalse(equipamento1.getCodigo() == equipamento2.getCodigo(),
-                "Códigos gerados para diferentes equipamentos não devem ser duplicados.");
+        assertNotEquals(equipamento1.getCodigo(), equipamento2.getCodigo(), "Códigos gerados para diferentes equipamentos não devem ser duplicados.");
     }
 }

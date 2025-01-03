@@ -9,13 +9,9 @@ import java.util.List;
 public class SistemaLocacaoEquipamento extends JFrame {
     private JPanel panel1;
     private JTabbedPane PainelSis;
-    private JComboBox<String> dropDwnEquip;
-    private JComboBox comboBox2;
-    private JButton baixarRegistroDeClientesButton;
-    private JButton baixarRegistroDeEquipamentosButton;
 
-    private List<Cliente> clientes;
-    private List<Equipamento> equipamentos;
+    private final List<Cliente> clientes;
+    private final List<Equipamento> equipamentos;
 
 
     public SistemaLocacaoEquipamento() {
@@ -24,15 +20,12 @@ public class SistemaLocacaoEquipamento extends JFrame {
 
 
         //utilizado para concatenação de painéis
-
-//        // Configurando a interface principal
+        // Configurando a interface principal
         PainelSis = new JTabbedPane();
 
-//
-//
         CadastroCliente cadastroCliente = new CadastroCliente(clientes);
         PainelSis.addTab("Cadastro de Cliente", cadastroCliente.getPanel());
-//
+
         CadastroEquipamento cadastroEquipamento = new CadastroEquipamento();
         PainelSis.addTab("Cadastro de Equipamentos", cadastroEquipamento.getPanel());
 
@@ -44,19 +37,17 @@ public class SistemaLocacaoEquipamento extends JFrame {
 
         GerarRelatorio gerarRelatorio = new GerarRelatorio();
         PainelSis.addTab("Gerar Relatório", gerarRelatorio.getPanel());
-//
+
         setContentPane(PainelSis);
         setTitle("Sistema de Locação de Equipamentos");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
-        setLocationRelativeTo(null); // Centraliza a janela na tela
+        setLocationRelativeTo(null);
 
     }
 
     public static void main (String[]args) {
 
-        //utilizado na concatenação dos painéis
-        // Define o estilo da interface gráfica conforme o sistema operacional
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
@@ -66,31 +57,13 @@ public class SistemaLocacaoEquipamento extends JFrame {
         SwingUtilities.invokeLater(() -> {
             try {
                 SistemaLocacaoEquipamento frame = new SistemaLocacaoEquipamento();
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Configuração de fechamento
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace(); // Registrar exceções adequadamente em produção
             }
         });
 
-//        // Define o estilo da interface gráfica conforme o sistema operacional
-//        try {
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        // Cria e exibe a janela da aplicação
-//        SwingUtilities.invokeLater(() -> {
-//            SistemaLocacaoEquipamento frame = new SistemaLocacaoEquipamento();
-//            frame.setTitle("Sistema de Locação de Equipamentos");
-//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//            frame.setContentPane(frame.panel1); // Adiciona o painel principal
-//            frame.pack(); // Ajusta o tamanho da janela aos componentes
-//            frame.setLocationRelativeTo(null); // Janela centralizada na tela
-//            frame.setVisible(true); // Torna a janela visível
-//        });
-//
 
     }
 }

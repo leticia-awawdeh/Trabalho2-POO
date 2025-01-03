@@ -5,21 +5,13 @@ import java.util.List;
 
 public class Cliente {
 
-
-
-
     private String nomeCli;
     private String cpfCli;
-    private String telefoneCli;
-    private List<Equipamento> equipAlug = new ArrayList<>();
-
-
+    private final String telefoneCli;
+    private final List<Equipamento> equipAlug = new ArrayList<>();
 
     private double multasTotais;
-    private List<String> historicoMultas = new ArrayList<>(); // Adicionado: Histórico de multas no formato de texto
-
-
-
+    private final List<String> historicoMultas = new ArrayList<>();
 
     // Construtor
     public Cliente(String nomeCli, String cpfCli, String telefoneCli) {
@@ -69,12 +61,4 @@ public class Cliente {
         return multasTotais;
     }
 
-    // Sobrescrevendo o toString
-    @Override
-    public String toString() {
-        return "Nome: " + nomeCli + "\n" +
-                "CPF: " + cpfCli + "\n" +
-                "Telefone: " + telefoneCli + "\n" +
-                "Multas Totais: R$ " + multasTotais;
-    }
 }

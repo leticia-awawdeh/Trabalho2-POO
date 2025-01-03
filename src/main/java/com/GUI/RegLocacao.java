@@ -62,15 +62,13 @@ public class RegLocacao {
         txtCpfCli.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent event) {
-                String cpfDigitado = txtCpfCli.getText(); // Obtém o CPF digitado com máscara.
+                String cpfDigitado = txtCpfCli.getText();
                 Cliente cliente = buscarClientePorCpf(cpfDigitado);
 
                 if (cliente != null) {
-                    // Preenche os campos se o cliente for encontrado
                     txtNomeCli.setText(cliente.getNomeCli());
                     txtTelefoneCli.setText(cliente.getTelefoneCli());
                 } else {
-                    // Limpa os campos caso o cliente não seja encontrado
                     txtNomeCli.setText("");
                     txtTelefoneCli.setText("");
                 }
@@ -84,7 +82,6 @@ public class RegLocacao {
                 String dataInicioStr = txtDataInicio.getText();
                 String dataTerminoStr = txtDataTermino.getText();
 
-                // Validar e converter as datas
                 LocalDate dataInicio;
                 LocalDate dataTermino;
                 try {
@@ -97,7 +94,6 @@ public class RegLocacao {
                     return;
                 }
 
-                // Verificar se os dias são válidos
                 long diasLocacao = calcularDiasEntreDatas(dataInicio, dataTermino);
                 if (diasLocacao <= 0) {
                     JOptionPane.showMessageDialog(regLoc,
@@ -106,7 +102,6 @@ public class RegLocacao {
                     return;
                 }
 
-                // Validar o cliente (CPF)
                 String cpfCliente = txtCpfCli.getText();
                 Cliente cliente = buscarClientePorCpf(cpfCliente);
                 if (cliente == null) {
@@ -116,7 +111,6 @@ public class RegLocacao {
                     return;
                 }
 
-                // Validar o equipamento selecionado
                 String nomeEquip = (String) dropDwnEquip.getSelectedItem();
                 Equipamento equipamentoSelecionado = GerenciadorDados.getListaEquipamentos()
                         .stream()
@@ -131,7 +125,6 @@ public class RegLocacao {
                     return;
                 }
 
-                // Criar locação e associar o equipamento ao cliente
                 Locacao novaLocacao = new Locacao(cliente,
                         equipamentoSelecionado,
                         dataInicio,
@@ -139,15 +132,12 @@ public class RegLocacao {
                         0.2 // Multa diária de 20%
                 );
 
-                // Associar o cliente ao equipamento
                 equipamentoSelecionado.incrementarFrequenciaAluguel();
                 equipamentoSelecionado.setCliente(cliente);
                 equipamentoSelecionado.setStatus(Status.ALUGADO);
 
-                // Registrar no sistema
                 GerenciadorDados.adicionarLocacao(novaLocacao);
 
-                // Atualizar a interface
                 GerenciadorDados.notificarAtualizacao();
 
                 // Exibir resumo para o usuário
@@ -167,7 +157,9 @@ public class RegLocacao {
                                 calcularValorLocacao(novaLocacao.getValorDiario(), diasLocacao)
                         ), "Sucesso", JOptionPane.INFORMATION_MESSAGE
                 );
+                limparCampos();
             }
+
         });
     }
     double valorLoc;
@@ -185,22 +177,18 @@ public class RegLocacao {
     }
 
     private void atualizarDropdownEquipamentos() {
-        // Limpa os itens do dropdown
         dropDwnEquip.removeAllItems();
 
         dropDwnEquip.addItem("Selecione o equipamento");
 
-        // Obtém todos os equipamentos disponíveis
         List<Equipamento> equipamentosDisponiveis = GerenciadorDados.getListaEquipamentos();
 
         for (Equipamento equipamento : equipamentosDisponiveis) {
-            // Adiciona apenas equipamentos com Status DISPONIVEL
             if (equipamento.getStatus() == Status.DISPONIVEL) {
-                dropDwnEquip.addItem(equipamento.getNome()); // Adiciona o nome ao dropdown
+                dropDwnEquip.addItem(equipamento.getNome());
             }
         }
 
-        // Se não houver nenhum equipamento disponível, exibe mensagem ou mantém o dropdown vazio
         if (dropDwnEquip.getItemCount() == 1) { // Apenas o placeholder
             dropDwnEquip.addItem("Nenhum equipamento disponível");
         }
@@ -209,7 +197,6 @@ public class RegLocacao {
     }
 
     public Cliente buscarClientePorCpf(String cpf) {
-        // Remove a formatação para buscar apenas pelos números
         String cpfSemFormatacao = cpf.replaceAll("[^\\d]", "");
 
         List<Cliente> clientes = GerenciadorDados.getListaClientes();
@@ -220,37 +207,41 @@ public class RegLocacao {
     }
 
     private void carregarEquipamentos() {
-        // Limpa todos os itens do JComboBox
         dropDwnEquip.removeAllItems();
 
-        // Adiciona o item "placeholder"
         dropDwnEquip.addItem("Selecione o equipamento");
 
-        // Obtém a lista de equipamentos do sistema
         List<Equipamento> equipamentos = GerenciadorDados.getListaEquipamentos();
 
-        // Filtrar e adicionar equipamentos disponíveis (Status DISPONIVEL)
         for (Equipamento equipamento : equipamentos) {
             if (equipamento.getStatus() == Status.DISPONIVEL) {
                 dropDwnEquip.addItem(equipamento.getNome());
             }
         }
 
-        // Verifica se há equipamentos disponíveis
         if (dropDwnEquip.getItemCount() == 1) { // Apenas o placeholder
             dropDwnEquip.addItem("Nenhum equipamento disponível");
         }
 
-        // Define o placeholder como selecionado por padrão
         dropDwnEquip.setSelectedIndex(0);
     }
 
+    private void limparCampos() {
+
+        txtDataInicio.setValue(null);
+        txtDataInicio.setText("");
+        txtDataTermino.setValue(null);
+        txtDataTermino.setText("");
+        txtCpfCli.setValue(null);
+        txtCpfCli.setText("");
+        txtNomeCli.setText("");
+        txtTelefoneCli.setText("");
+
+        dropDwnEquip.setSelectedIndex(0);
+    }
 
     public JPanel getPanel() {
         return regLoc;
     }
-
-
-
 
 }

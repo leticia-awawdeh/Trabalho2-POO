@@ -70,8 +70,7 @@ class SistemaLocacaoEquipamentoTest {
      */
     private JButton encontrarBotao(JPanel painel, String nomeBotao) {
         for (java.awt.Component componente : painel.getComponents()) {
-            if (componente instanceof JButton) {
-                JButton botao = (JButton) componente;
+            if (componente instanceof JButton botao) {
                 if (nomeBotao.equals(botao.getName())) {
                     return botao;
                 }

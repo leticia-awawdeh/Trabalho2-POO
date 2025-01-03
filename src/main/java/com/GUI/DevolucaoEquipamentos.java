@@ -17,6 +17,7 @@ public class DevolucaoEquipamentos {
     private JPanel panelDevolucao;
     private JLabel lblResult;
     private JPanel panelResult;
+    private JButton btnConfPagCli;
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -33,6 +34,8 @@ public class DevolucaoEquipamentos {
         btnConfDevolucao.addActionListener(e -> confirmarDevolucao());
 
         btnBuscarLoc.addActionListener(e -> buscarLocacao(txtCpf.getText()));
+
+        btnConfPagCli.addActionListener(e -> confirmarPagamento());
     }
 
     // Método para buscar locações por CPF
@@ -72,7 +75,6 @@ public class DevolucaoEquipamentos {
         Locacao locacao = locacaoOpt.get();
         Equipamento equipamento = locacao.getEquipamento();
 
-        // Exibir detalhes no painel
         lblResult.setText(String.format(
                 "<html>Equipamento: %s<br>" +
                         "Cliente: %s<br>" +
@@ -90,36 +92,29 @@ public class DevolucaoEquipamentos {
         panelResult.putClientProperty("locacaoSelecionada", locacao);
     }
 
-    // Método para confirmar devolução
     private void confirmarDevolucao() {
         Object locacaoObj = panelResult.getClientProperty("locacaoSelecionada");
 
-        if (locacaoObj == null || !(locacaoObj instanceof Locacao)) {
+        if (locacaoObj == null || !(locacaoObj instanceof Locacao locacao)) {
             JOptionPane.showMessageDialog(panelDevolucao,
                     "Nenhuma locação selecionada ou encontrada. Tente buscar novamente.",
                     "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Obtém a locação e equipamento associados
-        Locacao locacao = (Locacao) locacaoObj;
         Equipamento equipamento = locacao.getEquipamento();
 
-        // Atualizar status do equipamento
         equipamento.setStatus(Status.DISPONIVEL);
         equipamento.setCliente(null);
 
-        // Calcula dias de atraso e multa
         LocalDate dataDevolucao = LocalDate.now();
         locacao.setDataDevolucao(dataDevolucao);
         long diasAtraso = locacao.getDiasAtraso();
         double multa = locacao.calcularMulta();
         double valorAluguel = locacao.getValorDiario() * locacao.getQuantidadeDiasLocacao();
 
-        // Calcula o total
         double total = valorAluguel + multa;
 
-        // Se houver atraso, atualiza o histórico de multas do cliente
         if (diasAtraso > 0) {
             Cliente cliente = locacao.getCliente();
             if (cliente != null) {
@@ -132,7 +127,6 @@ public class DevolucaoEquipamentos {
             }
         }
 
-        // Exibir resumo no lblResult
         lblResult.setText(String.format(
                 "<html>Resumo da Devolução:<br><br>" +
                         "Equipamento: %s<br>" +
@@ -149,8 +143,18 @@ public class DevolucaoEquipamentos {
                 Utils.formatarMonetario(total)
         ));
 
-        // Limpar seleção no painel
         panelResult.putClientProperty("locacaoSelecionada", null);
+    }
+
+    private void confirmarPagamento() {
+        // Exibe um pop-up com mensagem de confirmação
+        JOptionPane.showMessageDialog(panelDevolucao,
+                "Pagamento confirmado e devoluções realizadas!",
+                "Confirmação", JOptionPane.INFORMATION_MESSAGE);
+
+        txtCpf.setValue(null);
+        txtCpf.setText("");
+        lblResult.setText("");
     }
 
     public JPanel getPanel() {

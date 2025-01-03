@@ -7,15 +7,14 @@ import java.util.Set;
 public class Equipamento {
     private static final Set<Integer> codigosUsados = new HashSet<>();
 
-    private int codigo;
-    private String nome; // Nome do equipamento
-    private String descricao; // Descrição do equipamento
-    private double valorDiario; // Valor diário do aluguel
+    private final int codigo;
+    private String nome;
+    private final String descricao;
+    private double valorDiario;
     private Status status;
-//    private LocalDate dataPrevistaDevolucao; // Data prevista para devolução
     private Cliente cliente;
     private int frequenciaAluguel;
-    private Cliente clienteAluguel;// Cliente associado ao aluguel do equipamento
+    private Cliente clienteAluguel;
 
     public Equipamento(String nome, String descricao, double valorDiario) {
         this.codigo = gerarCodigoEquip(); // Código gerado automaticamente
@@ -46,11 +45,6 @@ public class Equipamento {
     public void setClienteAluguel(Cliente clienteAluguel) {
         this.clienteAluguel = clienteAluguel;
     }
-//    public LocalDate getDataPrevistaDevolucao() {
-//        return dataPrevistaDevolucao;
-//    }
-
-
 
     public int getFrequenciaAluguel() {
         return frequenciaAluguel;
@@ -100,7 +94,7 @@ public class Equipamento {
     }
 
     public double calcularReceitaTotal() {
-        return frequenciaAluguel * valorDiario; // Multiplica as locações pelo valor diário
+        return frequenciaAluguel * valorDiario;
     }
 
     public void setCliente(Cliente cliente) {

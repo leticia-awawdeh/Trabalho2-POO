@@ -19,21 +19,16 @@ public class CadastroCliente {
     public JButton btnCancelarCadastro;
     private JPanel panelCadastroCliente;
 
-    private List<Cliente> clientes;
+    private final List<Cliente> clientes;
 
     // Construtor da interface
     public CadastroCliente(List<Cliente> clientes) {
         this.clientes = clientes;
 
-        panelCadastroCliente = new JPanel(); // Inicializa o painel principal
+        panelCadastroCliente = new JPanel();
         JLabel lblNome = new JLabel("Nome:");
         JLabel lblCpf = new JLabel("CPF:");
         JLabel lblTelefone = new JLabel("Telefone:");
-//        txtNomeCli = new JFormattedTextField();
-//        txtCpf = new JFormattedTextField();
-//        txtTelefone = new JFormattedTextField();
-//        btnSalvarCadCli = new JButton("Salvar");
-//        btnCancelarCadastro = new JButton("Cancelar");
 
         try {
             // Aplicando máscara para CPF
@@ -87,7 +82,6 @@ public class CadastroCliente {
                                 .addComponent(btnCancelarCadastro))
         );
 
-        // Ação do botão "Salvar"
         btnSalvarCadCli.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,10 +115,8 @@ public class CadastroCliente {
                     return;
                 }
 
-                // Cria o objeto cliente com CPF sem formatação
                 Cliente cliente = new Cliente(nomeCli, cpfCli, telefoneCli);
 
-                // Adiciona o cliente no GerenciadorDados
                 GerenciadorDados.adicionarCliente(cliente);
 
                 JOptionPane.showMessageDialog(panelCadastroCliente,
@@ -141,7 +133,6 @@ public class CadastroCliente {
             }
         });
 
-        // Ação do botão "Cancelar"
         btnCancelarCadastro.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -156,7 +147,7 @@ public class CadastroCliente {
         });
     }
 
-    // Método para retornar o painel principal que será usado em outra classe
+
     public JPanel getPanel() {
         return panelCadastroCliente;
     }

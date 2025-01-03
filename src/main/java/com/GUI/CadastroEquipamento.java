@@ -2,6 +2,8 @@ package com.GUI;
 
 import com.Backend.Equipamento;
 import com.Backend.GerenciadorDados;
+import com.Backend.Utils;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -38,16 +40,13 @@ public class CadastroEquipamento {
                     Equipamento equipamento = new Equipamento(nomeEquip, descricaoEquip, valorLocacao);
                     GerenciadorDados.adicionarEquipamento(equipamento);
 
-
-
-                    NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-                    String valorFormatado = formatter.format(valorLocacao);
+                    // Formata o valor com Utils
+                    String valorFormatado = Utils.formatarMonetario(valorLocacao);
 
                     JOptionPane.showMessageDialog(panelCadEquip, "Equipamento registrado com sucesso: \n" +
                             "Nome: " + nomeEquip + "\n" +
                             "Descrição: " + descricaoEquip + "\n" +
                             "Valor de Locação Diária: " + valorFormatado);
-
 
                     // Limpa os campos
                     txtNomeEquip.setText("");
@@ -103,10 +102,13 @@ public class CadastroEquipamento {
                         input = input.replace(".", "").replace(",", "");
 
                         if (!input.isEmpty()) {
-                            // Formata o valor automaticamente com ponto e vírgula
-                            double value = Double.parseDouble(input) / 100; // Ajusta para casas decimais
-                            DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
-                            txtLocDiaria.setText(decimalFormat.format(value));
+                            try {
+                                // Converte para número e ajusta para exibição formatada
+                                double value = Double.parseDouble(input) / 100; // Ajusta para casas decimais
+                                txtLocDiaria.setText(Utils.formatarMonetario(value)); // Usa Utils aqui
+                            } catch (NumberFormatException ex) {
+                                txtLocDiaria.setText(""); // Limpa se houver erro inesperado na formatação
+                            }
                         }
 
                         isUpdating = false;

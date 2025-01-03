@@ -24,7 +24,7 @@ class RegLocacaoTest {
         LocalDate inicio = LocalDate.parse("01/12/2023", dateFormatter);
         LocalDate termino = LocalDate.parse("10/12/2023", dateFormatter);
 
-        long dias = regLocacao.calcularDiasEntreDatas(inicio, termino);
+        long dias = RegLocacao.calcularDiasEntreDatas(inicio, termino);
         assertEquals(9, dias, "O cálculo dos dias entre as datas está incorreto!");
     }
 
@@ -33,7 +33,7 @@ class RegLocacaoTest {
         LocalDate inicio = LocalDate.parse("10/12/2023", dateFormatter);
         LocalDate termino = LocalDate.parse("01/12/2023", dateFormatter);
 
-        long dias = regLocacao.calcularDiasEntreDatas(inicio, termino);
+        long dias = RegLocacao.calcularDiasEntreDatas(inicio, termino);
         assertEquals(-9, dias, "O cálculo deveria retornar um número negativo para intervalo inválido!");
     }
 
@@ -72,7 +72,7 @@ class RegLocacaoTest {
         Equipamento equipamento = new Equipamento("Equipamento Teste", "Descrição Teste", 50.0);
         equipamento.setStatus(Status.DISPONIVEL); // Marca como disponível
 
-        assertTrue(equipamento.getStatus() == Status.DISPONIVEL, "O equipamento deveria estar disponível!");
+        assertSame(equipamento.getStatus(), Status.DISPONIVEL, "O equipamento deveria estar disponível!");
     }
 
     @Test
@@ -80,7 +80,7 @@ class RegLocacaoTest {
         Equipamento equipamento = new Equipamento("Equipamento Teste", "Descrição Teste", 50.0);
         equipamento.setStatus(Status.ALUGADO); // Marca como alugado
 
-        assertFalse(equipamento.getStatus() == Status.DISPONIVEL, "O equipamento não deveria estar disponível!");
+        assertNotSame(equipamento.getStatus(), Status.DISPONIVEL, "O equipamento não deveria estar disponível!");
     }
 
     @Test

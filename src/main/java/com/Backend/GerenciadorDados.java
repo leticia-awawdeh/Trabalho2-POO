@@ -9,11 +9,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class GerenciadorDados {
-    private static List<Equipamento> listaEquipamentos = new ArrayList<>();
-    private static List<Cliente> listaClientes = new ArrayList<>();
-    private static List<Locacao> listaLocacoes = new ArrayList<>();// Lista de clientes
+    private static final List<Equipamento> listaEquipamentos = new ArrayList<>();
+    private static final List<Cliente> listaClientes = new ArrayList<>();
+    private static final List<Locacao> listaLocacoes = new ArrayList<>();
 
-    private static List<AtualizacaoListener> listeners = new ArrayList<>(); // Lista de ouvintes
+    private static final List<AtualizacaoListener> listeners = new ArrayList<>();
 
     // ---------------- Métodos para Equipamentos ---------------- //
     public static List<Equipamento> getListaEquipamentos() {
@@ -22,7 +22,7 @@ public class GerenciadorDados {
 
     public static void adicionarEquipamento(Equipamento equipamento) {
         listaEquipamentos.add(equipamento);
-        notificarAtualizacao(); // Notifica painéis e componentes sobre mudanças
+        notificarAtualizacao();
     }
 
     public static void removerEquipamento(Equipamento equipamento) {
@@ -32,9 +32,6 @@ public class GerenciadorDados {
 
     // ---------------- Métodos para Clientes ---------------- //
 
-    /**
-     * Obtém a lista completa de clientes cadastrados.
-     */
     public static List<Cliente> getListaClientes() {
         return listaClientes;
     }
@@ -47,7 +44,6 @@ public class GerenciadorDados {
         listaLocacoes.add(locacao);
     }
 
-    // Opcional: Para debug, exibir locações registradas
     public static void listarLocacoes() {
         listaLocacoes.forEach(loc -> System.out.println("Cliente CPF: " + loc.getCliente().getCpfCli()));
     }
@@ -55,7 +51,6 @@ public class GerenciadorDados {
     public static List<Cliente> calcularMultasPorCliente() {
         // Itera sobre cada cliente registrado
         for (Cliente cliente : listaClientes) {
-            // Seleciona as locações associadas a este cliente
             List<Locacao> locacoesCliente = listaLocacoes.stream()
                     .filter(locacao -> locacao.getCliente() != null && locacao.getCliente().equals(cliente))
                     .toList();
@@ -79,20 +74,14 @@ public class GerenciadorDados {
         double totalMultas = 0.0;
 
         for (Locacao locacao : listaLocacoes) {
-            // Verifica se a data de devolução é posterior à permitida
             if (locacao.getDataDevolucao().isAfter(locacao.getDataPrevistaDevolucao())) {
-                // Calcula a diferença de dias entre a devolução e a data prevista
                 long diasAtraso = locacao.getDataPrevistaDevolucao().until(locacao.getDataDevolucao()).getDays();
-                // Calcula multa para os dias atrasados (exemplo: R$ 10,00 por dia de atraso)
                 totalMultas += diasAtraso * 10.0;
             }
         }
         return totalMultas;
     }
 
-    /**
-     * Adiciona um cliente à lista de clientes.
-     */
     public static void adicionarCliente(Cliente cliente) {
         // Verifica se o CPF já está cadastrado
         boolean cpfCadastrado = listaClientes.stream()
@@ -105,19 +94,16 @@ public class GerenciadorDados {
         }
 
         listaClientes.add(cliente);
-        notificarAtualizacao(); // Notifica listeners sobre a mudança
+        notificarAtualizacao();
     }
 
-    /**
-     * Remove um cliente da lista de clientes.
-     */
     public static void removerCliente(Cliente cliente) {
         listaClientes.remove(cliente);
         notificarAtualizacao();
     }
 
     public static boolean isCpfCadastrado(String cpf) {
-        for (Cliente cliente : listaClientes) { // "listaClientes" é o nome correto da variável
+        for (Cliente cliente : listaClientes) {
             if (cliente.getCpfCli().equals(cpf)) {
                 return true;
             }
@@ -134,25 +120,16 @@ public class GerenciadorDados {
         return false;
     }
 
-    // ---------------- Notificações ---------------- //
+    // ---------------- Notificações (listeners) ---------------- //
 
-    /**
-     * Adiciona um listener para ser notificado quando a lista de equipamentos ou clientes mudar.
-     */
     public static void addAtualizacaoListener(AtualizacaoListener listener) {
         listeners.add(listener);
     }
 
-    /**
-     * Remove um listener.
-     */
     public static void removeAtualizacaoListener(AtualizacaoListener listener) {
         listeners.remove(listener);
     }
 
-    /**
-     * Notifica todos os listeners sobre a atualização.
-     */
     public static void notificarAtualizacao() {
         for (AtualizacaoListener listener : listeners) {
             listener.onAtualizacao();
@@ -161,9 +138,6 @@ public class GerenciadorDados {
 
     // ---------------- Interface Listener ---------------- //
 
-    /**
-     * Interface para observar mudanças na lista de equipamentos ou lista de clientes.
-     */
     public interface AtualizacaoListener {
         void onAtualizacao();
     }
@@ -190,45 +164,29 @@ public class GerenciadorDados {
             });
         }
 
-        /**
-         * Busca os CPFs mais compatíveis com o texto informado no campo `txtCpfBusca`.
-         *
-         * @param inputCpf CPF ou parte dele digitado no campo de busca.
-         * @return Lista de strings com CPFs compatíveis.
-         */
         private List<String> buscarCpfsCompatíveis(String inputCpf) {
-            // Obtém a lista de clientes do GerenciadorDados
             List<Cliente> listaClientes = GerenciadorDados.getListaClientes();
 
             // Realiza a filtragem baseada no input fornecido
             return listaClientes.stream()
                     .map(Cliente::getCpfCli)  // Obtém todos os CPFs
-                    .filter(cpf -> ((String) cpf).contains(inputCpf)) // Filtra os que contêm o texto digitado
+                    .filter(cpf -> cpf.contains(inputCpf)) // Filtra os que contêm o texto digitado
                     .collect(Collectors.toList()); // Converte para lista
         }
 
-        /**
-         * Atualiza a lista da interface com os resultados encontrados.
-         *
-         * @param resultados Lista de CPFs compatíveis.
-         */
         private void atualizarResultados(List<String> resultados) {
             DefaultListModel<String> listModel = new DefaultListModel<>();
             for (String cpf : resultados) {
-                listModel.addElement(cpf); // Adiciona cada CPF no modelo
+                listModel.addElement(cpf);
             }
             listResultCpfs.setModel(listModel); // Atualiza a lista exibida
         }
 
-        /**
-         * Retorna o painel principal para exibição no JFrame.
-         */
         public JPanel getPanel() {
             return panelBuscaCpf;
         }
     }
 
-    // Método para associar um cliente a um equipamento alugado
     public static void registrarLocacao(Cliente cliente, Equipamento equipamento) {
         if (cliente == null) {
             throw new IllegalArgumentException("Cliente não pode ser nulo.");
@@ -243,7 +201,6 @@ public class GerenciadorDados {
         notificarAtualizacao(); // Notifica os componentes sobre a alteração
     }
 
-    // Método para encontrar um equipamento alugado por CPF do cliente
     public static Optional<Equipamento> buscarEquipamentoAlugadoPorCpf(String cpf) {
         String cpfDigitado = cpf.replaceAll("[^\\d]", ""); // Remove formatação
 
