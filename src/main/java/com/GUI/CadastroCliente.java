@@ -106,6 +106,21 @@ public class CadastroCliente {
                     return;
                 }
 
+                // Verifica se o CPF já está cadastrado
+                if (GerenciadorDados.isCpfCadastrado(cpfCli)) {
+                    JOptionPane.showMessageDialog(panelCadastroCliente,
+                            "Erro: O CPF informado já está cadastrado!",
+                            "CPF Duplicado", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (GerenciadorDados.isTelefoneCadastrado(telefoneCli)) {
+                    JOptionPane.showMessageDialog(panelCadastroCliente,
+                            "Erro: O número de telefone informado já está cadastrado!",
+                            "Telefone Duplicado", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 // Cria o objeto cliente com CPF sem formatação
                 CadastroCli cliente = new CadastroCli(nomeCli, cpfCli, telefoneCli);
 

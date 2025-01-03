@@ -14,12 +14,16 @@ public class CadastroCli {
     private LocalDate dataDevol;
     private int qtdDiasAlug;
     private double multa;
+    private List<Multa> listaMultas = new ArrayList<>(); // Lista de multas do cliente
+    private double multasTotais;
 
     // Construtor
     public CadastroCli(String nomeCli, String cpfCli, String telefoneCli) {
         this.nomeCli = nomeCli;
         this.cpfCli = cpfCli;
         this.telefoneCli = telefoneCli;
+        this.listaMultas = listaMultas;
+        this.multasTotais = 0.0;
     }
 
     // Adicionar equipamento ao cliente
@@ -35,6 +39,23 @@ public class CadastroCli {
     // Getters e Setters
     public String getNomeCli() {
         return nomeCli;
+    }
+
+    public List<Multa> getListaMultas() {
+        return listaMultas;
+    }
+
+    public void setListaMultas(List<Multa> listaMultas) {
+        this.listaMultas = listaMultas;
+    }
+
+
+    public double getMultasTotais() {
+        return multasTotais;
+    }
+
+    public void setMultasTotais(double multasTotais) {
+        this.multasTotais = multasTotais;
     }
 
     public void setNomeCli(String nomeCli) {

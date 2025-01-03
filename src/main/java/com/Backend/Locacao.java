@@ -5,23 +5,30 @@ import java.time.temporal.ChronoUnit;
 
 public class Locacao {
 
-    private Cliente cliente;
+    private CadastroCli cliente;
     private Equipamento equipamento;
-    private LocalDate dataInicio;
-    private LocalDate dataPrevistaDevolucao;
+    private static LocalDate dataInicio;
+    private static LocalDate dataPrevistaDevolucao;
     private LocalDate dataDevolucao;
-    private double multaDiaria;  // Ex.: 0.10 para 10%
+    private double multaDiaria; // Ex.: 0.10 para 10%
+    private static double valorDiario; // Valor diário do equipamento
+    private static double valorTotal;
+    private static double valorTotal2;
+    // Valor total da locação
 
-    public Locacao(Cliente cliente, Equipamento equipamento, LocalDate dataInicio, LocalDate dataPrevistaDevolucao, double multaDiaria) {
+    public Locacao(CadastroCli cliente, Equipamento equipamento, LocalDate dataInicio, LocalDate dataPrevistaDevolucao, double multaDiaria) {
         this.cliente = cliente;
         this.equipamento = equipamento;
         this.dataInicio = dataInicio;
         this.dataPrevistaDevolucao = dataPrevistaDevolucao;
         this.multaDiaria = multaDiaria;
-        this.dataDevolucao = null;
+        this.valorDiario = equipamento.getValorDiario(); // Obtém diretamente do equipamento
+//        this.valorTotal = calcularValorTotal(); // Calcula o total estimado
+        this.dataDevolucao = null; // Inicialmente sem data
     }
 
-    public Cliente getCliente() {
+    // Getters e setters
+    public CadastroCli getCliente() {
         return cliente;
     }
 
@@ -29,11 +36,11 @@ public class Locacao {
         return equipamento;
     }
 
-    public LocalDate getDataInicio() {
+    public static LocalDate getDataInicio() {
         return dataInicio;
     }
 
-    public LocalDate getDataPrevistaDevolucao() {
+    public static LocalDate getDataPrevistaDevolucao() {
         return dataPrevistaDevolucao;
     }
 
@@ -41,12 +48,21 @@ public class Locacao {
         return dataDevolucao;
     }
 
-    public void setDataDevolucao(LocalDate dataDevolucao) {
-        this.dataDevolucao = dataDevolucao;
-    }
+//    public void setDataDevolucao(LocalDate dataDevolucao) {
+//        this.dataDevolucao = dataDevolucao;
+//        this.valorTotal = calcularValorTotal(); // Recalcula o total ao registrar devolução
+//    }
 
     public double getMultaDiaria() {
         return multaDiaria;
+    }
+
+    public static double getValorDiario() {
+        return valorDiario; // Retorna o valor diário
+    }
+
+    public static double getValorTotal() {
+        return valorTotal; // Retorna o valor total (aluguel + multa, se houver)
     }
 
     public long getQuantidadeDiasLocacao() {
@@ -60,17 +76,19 @@ public class Locacao {
         return 0;
     }
 
-    public double getValorTotalEstimado() {
-        return equipamento.getValorDiario() * getQuantidadeDiasLocacao();
-    }
-
-    public double calcularMulta() {
-        return getDiasAtraso() * multaDiaria;
-    }
-
-    public double calcularValorTotal() {
-        return getValorTotalEstimado() + calcularMulta();
-    }
+//    public double calcularMulta() {
+//        return getDiasAtraso() * multaDiaria;
+//    }
+//
+//    public double calcularValorTotal() {
+//        double valorBase = valorDiario * getQuantidadeDiasLocacao(); // Aluguel básico
+//
+//        return valorTotal2 = valorBase + calcularMulta(); // Soma da multa, se aplicável
+//    }
+//
+//    public static double getValorTotalM(){
+//        return valorTotal2;
+//    }
 
     @Override
     public String toString() {
@@ -81,11 +99,11 @@ public class Locacao {
                 ", dataPrevistaDevolucao=" + dataPrevistaDevolucao +
                 ", dataDevolucao=" + dataDevolucao +
                 ", multaDiaria=" + multaDiaria +
+                ", valorDiario=" + valorDiario +
+                ", valorTotal=" + valorTotal +
                 ", quantidadeDiasLocacao=" + getQuantidadeDiasLocacao() +
                 ", diasAtraso=" + getDiasAtraso() +
-                ", valorTotalEstimado=" + getValorTotalEstimado() +
-                ", multa=" + calcularMulta() +
-                ", valorTotal=" + calcularValorTotal() +
+//                ", multa=" + calcularMulta() +
                 '}';
     }
 }

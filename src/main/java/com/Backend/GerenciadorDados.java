@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 
 public class GerenciadorDados {
     private static List<Equipamento> listaEquipamentos = new ArrayList<>();
-    private static List<CadastroCli> listaClientes = new ArrayList<>(); // Lista de clientes
+    private static List<CadastroCli> listaClientes = new ArrayList<>();
+    private static List<Locacao> listaLocacoes = new ArrayList<>();// Lista de clientes
 
     private static List<AtualizacaoListener> listeners = new ArrayList<>(); // Lista de ouvintes
 
@@ -38,6 +39,39 @@ public class GerenciadorDados {
         return listaClientes;
     }
 
+    public static List<Locacao> getListaLocacoes() {
+        return listaLocacoes;
+    }
+
+    public static void adicionarLocacao(Locacao locacao) {
+        listaLocacoes.add(locacao);
+    }
+
+    // Opcional: Para debug, exibir locações registradas
+    public static void listarLocacoes() {
+        listaLocacoes.forEach(loc -> System.out.println("Cliente CPF: " + loc.getCliente().getCpf()));
+    }
+
+    public static List<CadastroCli> calcularMultasPorCliente() {
+        // Percorre todos os clientes e acumula o valor das multas
+        for (CadastroCli cliente : listaClientes) {
+            double totalMultas = cliente.getListaMultas() // Supondo que o cliente tenha uma lista de multas
+                    .stream()
+                    .mapToDouble(Multa::getValor) // Soma os valores das multas
+                    .sum();
+
+            // Define o total de multas no cliente
+            cliente.setMultasTotais(totalMultas);
+        }
+        return getListaClientes()
+                .stream()
+                .filter(cli -> cli.getListaMultas() != null && !cli.getListaMultas().isEmpty())
+                .peek(cli -> {
+                    // Calcule as multas aqui
+                })
+                .toList(); // Retorna a lista atualizada
+    }
+
     /**
      * Adiciona um cliente à lista de clientes.
      */
@@ -52,6 +86,24 @@ public class GerenciadorDados {
     public static void removerCliente(CadastroCli cliente) {
         listaClientes.remove(cliente);
         notificarAtualizacao();
+    }
+
+    public static boolean isCpfCadastrado(String cpf) {
+        for (CadastroCli cliente : listaClientes) { // "listaClientes" é o nome correto da variável
+            if (cliente.getCpf().equals(cpf)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isTelefoneCadastrado(String telefone){
+        for (CadastroCli cliente : listaClientes){
+            if (cliente.getTelefone().equals(telefone)){
+                return true;
+            }
+        }
+        return false;
     }
 
     // ---------------- Notificações ---------------- //
@@ -159,11 +211,14 @@ public class GerenciadorDados {
 
     // Método para encontrar um equipamento alugado por CPF do cliente
     public static Optional<Equipamento> buscarEquipamentoAlugadoPorCpf(String cpf) {
+        String cpfDigitado = cpf.replaceAll("[^\\d]", ""); // Remove formatação
+
         return listaEquipamentos
                 .stream()
-                .filter(equip -> equip.getStatus() == Status.ALUGADO
-                        && equip.getCliente() != null
-                        && equip.getCliente().getCpf().equals(cpf))
-                .findFirst(); // Retorna o equipamento alugado, se existir
+                .filter(equip ->
+                        equip.getStatus() == Status.ALUGADO &&
+                                equip.getCliente() != null &&
+                                equip.getCliente().getCpf().replaceAll("[^\\d]", "").equals(cpfDigitado))
+                .findFirst();
     }
 }

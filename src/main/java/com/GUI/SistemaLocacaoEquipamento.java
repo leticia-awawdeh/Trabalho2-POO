@@ -59,7 +59,7 @@ public class SistemaLocacaoEquipamento extends JFrame {
 
     }
 
-    public static void main (String[]args){
+    public static void main (String[]args) {
 
         //utilizado na concatenação dos painéis
         // Define o estilo da interface gráfica conforme o sistema operacional
@@ -79,23 +79,24 @@ public class SistemaLocacaoEquipamento extends JFrame {
             }
         });
 
-        // Define o estilo da interface gráfica conforme o sistema operacional
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Cria e exibe a janela da aplicação
-        SwingUtilities.invokeLater(() -> {
-            SistemaLocacaoEquipamento frame = new SistemaLocacaoEquipamento();
-            frame.setTitle("Sistema de Locação de Equipamentos");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(frame.panel1); // Adiciona o painel principal
-            frame.pack(); // Ajusta o tamanho da janela aos componentes
-            frame.setLocationRelativeTo(null); // Janela centralizada na tela
-            frame.setVisible(true); // Torna a janela visível
-        });
+//        // Define o estilo da interface gráfica conforme o sistema operacional
+//        try {
+//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        // Cria e exibe a janela da aplicação
+//        SwingUtilities.invokeLater(() -> {
+//            SistemaLocacaoEquipamento frame = new SistemaLocacaoEquipamento();
+//            frame.setTitle("Sistema de Locação de Equipamentos");
+//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//            frame.setContentPane(frame.panel1); // Adiciona o painel principal
+//            frame.pack(); // Ajusta o tamanho da janela aos componentes
+//            frame.setLocationRelativeTo(null); // Janela centralizada na tela
+//            frame.setVisible(true); // Torna a janela visível
+//        });
+//
 
     }
 }

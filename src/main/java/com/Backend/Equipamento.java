@@ -15,7 +15,8 @@ public class Equipamento {
     private Status status;
     private LocalDate dataPrevistaDevolucao; // Data prevista para devolução
     private CadastroCli cliente;
-    private int frequenciaAluguel;// Cliente associado ao aluguel do equipamento
+    private int frequenciaAluguel;
+    private CadastroCli clienteAluguel;// Cliente associado ao aluguel do equipamento
 
     public Equipamento(String nome, String descricao, double valorDiario) {
         this.codigo = gerarCodigoEquip(); // Código gerado automaticamente
@@ -30,7 +31,7 @@ public class Equipamento {
         int codigo;
 
         do {
-            codigo = 10000000 + random.nextInt(90000000);
+            codigo = 100000 + random.nextInt(900000);
         } while (codigosUsados.contains(codigo));
 
         codigosUsados.add(codigo);
@@ -39,14 +40,18 @@ public class Equipamento {
     }
 
     // Getters e Setters
+    public CadastroCli getClienteAluguel() {
+        return clienteAluguel;
+    }
 
+    public void setClienteAluguel(CadastroCli clienteAluguel) {
+        this.clienteAluguel = clienteAluguel;
+    }
     public LocalDate getDataPrevistaDevolucao() {
         return dataPrevistaDevolucao;
     }
 
-    public void setDataPrevistaDevolucao(LocalDate dataPrevistaDevolucao) {
-        this.dataPrevistaDevolucao = dataPrevistaDevolucao;
-    }
+
 
     public int getFrequenciaAluguel() {
         return frequenciaAluguel;
@@ -89,6 +94,10 @@ public class Equipamento {
 
     public CadastroCli getCliente() {
         return cliente;
+    }
+
+    public double calcularReceitaTotal() {
+        return frequenciaAluguel * valorDiario; // Multiplica as locações pelo valor diário
     }
 
     public void setCliente(CadastroCli cliente) {

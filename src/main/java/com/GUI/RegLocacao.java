@@ -1,9 +1,6 @@
 package com.GUI;
 
-import com.Backend.CadastroCli;
-import com.Backend.Equipamento;
-import com.Backend.GerenciadorDados;
-import com.Backend.Status;
+import com.Backend.*;
 
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
@@ -29,7 +26,9 @@ public class RegLocacao {
     private JPanel regLoc;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+
     public RegLocacao() {
+
         carregarEquipamentos();
 
         try {
@@ -44,15 +43,15 @@ public class RegLocacao {
             txtDataInicio.setFormatterFactory(new DefaultFormatterFactory(dateMask));
             txtDataTermino.setFormatterFactory(new DefaultFormatterFactory(dateMask));
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         GerenciadorDados.addAtualizacaoListener(() -> carregarEquipamentos());
 
         dropDwnEquip.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent event) {
                 String equipamentoSelecionado = (String) dropDwnEquip.getSelectedItem();
                 if (!"Selecione o equipamento".equals(equipamentoSelecionado)) {
                     System.out.println("Equipamento selecionado: " + equipamentoSelecionado);
@@ -62,7 +61,7 @@ public class RegLocacao {
 
         txtCpfCli.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyReleased(KeyEvent e) {
+            public void keyReleased(KeyEvent event) {
                 String cpfDigitado = txtCpfCli.getText(); // Obtém o CPF digitado com máscara.
                 CadastroCli cliente = buscarClientePorCpf(cpfDigitado);
 
@@ -82,7 +81,6 @@ public class RegLocacao {
         btnRegistrarLoc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 String dataInicioStr = txtDataInicio.getText();
                 String dataTerminoStr = txtDataTermino.getText();
 
@@ -99,19 +97,18 @@ public class RegLocacao {
                     return;
                 }
 
-                // Calcular a quantidade de dias de locação
+                // Verificar se os dias são válidos
                 long diasLocacao = calcularDiasEntreDatas(dataInicio, dataTermino);
-                if (diasLocacao < 0) {
+                if (diasLocacao <= 0) {
                     JOptionPane.showMessageDialog(regLoc,
-                            "A data de término não pode ser anterior à data de início.",
-                            "Erro de Datas", JOptionPane.WARNING_MESSAGE);
+                            "Data de término deve ser posterior à data de início.",
+                            "Erro", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
-                // Valida se o cliente foi encontrado pelo CPF
+                // Validar o cliente (CPF)
                 String cpfCliente = txtCpfCli.getText();
                 CadastroCli cliente = buscarClientePorCpf(cpfCliente);
-
                 if (cliente == null) {
                     JOptionPane.showMessageDialog(regLoc,
                             "Cliente não encontrado. Verifique o CPF e tente novamente.",
@@ -119,54 +116,67 @@ public class RegLocacao {
                     return;
                 }
 
-                // Obter o equipamento selecionado
+                // Validar o equipamento selecionado
                 String nomeEquip = (String) dropDwnEquip.getSelectedItem();
-                if (nomeEquip == null || nomeEquip.equals("Selecione o equipamento") || nomeEquip.equals("Nenhum equipamento disponível")) {
-                    JOptionPane.showMessageDialog(regLoc,
-                            "Por favor, selecione um equipamento válido para registrar a locação.",
-                            "Erro", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-
-                // Buscar equipamento correspondente
                 Equipamento equipamentoSelecionado = GerenciadorDados.getListaEquipamentos()
                         .stream()
-                        .filter(equip -> equip.getNome().equals(nomeEquip))
+                        .filter(eq -> eq.getNome().equals(nomeEquip) && eq.getStatus() == Status.DISPONIVEL)
                         .findFirst()
                         .orElse(null);
 
-                if (equipamentoSelecionado == null || equipamentoSelecionado.getStatus() != Status.DISPONIVEL) {
+                if (equipamentoSelecionado == null) {
                     JOptionPane.showMessageDialog(regLoc,
-                            "O equipamento selecionado já está alugado ou indisponível.",
+                            "Equipamento inválido ou indisponível.",
                             "Erro", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
-                // Define o status como alugado e vincula o cliente
+                // Criar locação e associar o equipamento ao cliente
+                Locacao novaLocacao = new Locacao(cliente,
+                        equipamentoSelecionado,
+                        dataInicio,
+                        dataTermino,
+                        0.2 // Multa diária de 20%
+                );
+
+                // Associar o cliente ao equipamento
+                equipamentoSelecionado.setCliente(cliente);
                 equipamentoSelecionado.setStatus(Status.ALUGADO);
 
-                // *** Configura a data prevista de devolução ***
-                equipamentoSelecionado.setDataPrevistaDevolucao(dataTermino);
+                // Registrar no sistema
+                GerenciadorDados.adicionarLocacao(novaLocacao);
 
-                // Registrar locação no sistema
-                GerenciadorDados.registrarLocacao(cliente, equipamentoSelecionado);
-
-                equipamentoSelecionado.incrementarFrequenciaAluguel(); // Incrementa o contador de aluguel
+                // Atualizar a interface
                 GerenciadorDados.notificarAtualizacao();
 
-                // Exibir informações da locação para o usuário
-                double valorDiario = equipamentoSelecionado.getValorDiario(); // Supondo que Equipamento tenha um método getValorDiario()
-                double valorTotal = valorDiario * diasLocacao;
-
+                // Exibir resumo para o usuário
                 JOptionPane.showMessageDialog(regLoc,
-                        "Locação registrada com sucesso!\n" +
-                                "Equipamento: " + equipamentoSelecionado.getNome() + "\n" +
-                                "Data de Início: " + dataInicio.format(dateFormatter) + "\n" +
-                                "Data Prevista de Devolução: " + dataTermino.format(dateFormatter) + "\n" +
-                                "Quantidade de Dias: " + diasLocacao + "\n",
-                        "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                        String.format(
+                                "Locação registrada com sucesso.\n\n" +
+                                        "Equipamento: %s\n" +
+                                        "Data Início: %s | Data Fim: %s\n" +
+                                        "Dias Locação: %d dias\n" +
+                                        "Valor Diário: R$ %.2f\n" +
+                                        "Valor Total: R$ %.2f",
+                                equipamentoSelecionado.getNome(),
+                                dataInicio.format(dateFormatter),
+                                dataTermino.format(dateFormatter),
+                                diasLocacao,
+                                novaLocacao.getValorDiario(),
+                                calcularValorLocacao(novaLocacao.getValorDiario(), diasLocacao)
+                        ), "Sucesso", JOptionPane.INFORMATION_MESSAGE
+                );
             }
         });
+    }
+    double valorLoc;
+    private double calcularValorLocacao(double valorDiario, long dias) {
+        valorLoc = valorDiario * dias;
+        return valorLoc;
+    }
+
+    private static String formatarValorMonetario(double valor) {
+        return String.format("R$ %.2f", valor);
     }
 
     private long calcularDiasEntreDatas(LocalDate inicio, LocalDate termino) {
@@ -218,12 +228,19 @@ public class RegLocacao {
         // Obtém a lista de equipamentos do sistema
         List<Equipamento> equipamentos = GerenciadorDados.getListaEquipamentos();
 
-        // Adiciona cada equipamento ao JComboBox
+        // Filtrar e adicionar equipamentos disponíveis (Status DISPONIVEL)
         for (Equipamento equipamento : equipamentos) {
-            dropDwnEquip.addItem(equipamento.getNome());
+            if (equipamento.getStatus() == Status.DISPONIVEL) {
+                dropDwnEquip.addItem(equipamento.getNome());
+            }
         }
 
-        // Define como selecionado o primeiro item (placeholder)
+        // Verifica se há equipamentos disponíveis
+        if (dropDwnEquip.getItemCount() == 1) { // Apenas o placeholder
+            dropDwnEquip.addItem("Nenhum equipamento disponível");
+        }
+
+        // Define o placeholder como selecionado por padrão
         dropDwnEquip.setSelectedIndex(0);
     }
 

@@ -16,12 +16,12 @@ public class Relatorio {
         System.out.println("======================================");
     }
 
-    public static void exibirRelatorioClientesComMultasAcumuladas(List<Map.Entry<Cliente, Double>> listaClientes) {
+    public static void exibirRelatorioClientesComMultasAcumuladas(List<Map.Entry<CadastroCli, Double>> listaClientes) {
         System.out.println("Relatório de Clientes com Multas Acumuladas");
         System.out.println("===========================================");
 
-        for (Map.Entry<Cliente, Double> entry : listaClientes) {
-            System.out.println(entry.getKey().getNome() + " - R$ " + entry.getValue());
+        for (Map.Entry<CadastroCli, Double> entry : listaClientes) {
+            System.out.println(entry.getKey().getNomeCli() + " - R$ " + entry.getValue());
         }
 
         System.out.println("===========================================");
